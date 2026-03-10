@@ -1,0 +1,75 @@
+:root {
+  --font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 20px;
+  --line-height: 1.5;
+  --weight-regular: 400;
+  --weight-semibold: 600;
+
+  /* Colors */
+  --color-text: #102a43;
+  --color-muted: #3d6b7a;
+  --color-bg: #f3fbff;
+  --surface-bg: rgba(255,255,255,0.95);
+  --primary: #0b6bd6;
+  --primary-variant: #1f6feb;
+  --accent: #646cff;
+  --danger: #d64545;
+
+  /* UI tokens */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --card-shadow: 0 6px 18px rgba(16,42,67,0.06);
+  --card-inner-shadow: 0 6px 12px rgba(16,42,67,0.06);
+  --gap-xs: 6px;
+  --gap-sm: 12px;
+  --gap-md: 18px;
+  --gap-lg: 28px;
+}
+
+/* Global base styles */
+* { box-sizing: border-box }
+html, body, #root { height: 100% }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale }
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height);
+  color: var(--color-text);
+  background: var(--color-bg);
+  min-width: 320px;
+}
+
+/* Links */
+a { font-weight: 500; color: var(--accent); text-decoration: inherit }
+a:hover { color: var(--primary-variant) }
+
+/* Unified button style */
+button, .btn {
+  font-family: inherit;
+  font-size: var(--fs-md);
+  padding: 0.6em 1.1em;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: var(--primary-variant);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+button:hover, .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,66,128,0.12) }
+button:active, .btn:active { transform: translateY(0) }
+button:focus, .btn:focus { outline: 4px auto -webkit-focus-ring-color }
+
+/* Form inputs */
+input, textarea, select { font-family: inherit }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-text: #213547;
+    --color-bg: #ffffff;
+    --surface-bg: rgba(255,255,255,1);
+  }
+}
