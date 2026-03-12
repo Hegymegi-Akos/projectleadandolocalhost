@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useFavorites } from '../contexts/FavoritesContext';
@@ -15,79 +15,198 @@ const Header = () => {
   const isAdmin = isAllowedAdminUser(user);
   const [searchTerm, setSearchTerm] = useState('');
   const [openMenu, setOpenMenu] = useState(false);
+  const [mobileNav, setMobileNav] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close menus on route change
+  useEffect(() => {
+    setOpenMenu(false);
+    setMobileNav(false);
+  }, [location.pathname]);
 
   useEffect(() => {
-    const closeOnOutsideClick = (e) => {
+    const close = (e) => {
       if (!e.target.closest('.user-menu')) setOpenMenu(false);
     };
-    document.addEventListener('click', closeOnOutsideClick);
-    return () => document.removeEventListener('click', closeOnOutsideClick);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
   }, []);
+
+  // Prevent scroll when mobile nav is open
+  useEffect(() => {
+    document.body.style.overflow = mobileNav ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileNav]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      setMobileNav(false);
+    }
+  };
+
+  const navTo = (path) => {
+    navigate(path);
+    setOpenMenu(false);
+    setMobileNav(false);
   };
 
   return (
-    <header className="site-header" role="banner">
-      <div className="container header-inner">
-        <div className="header-left">
-          <h1 className="site-title"><Link to="/">Kisallat webshop</Link></h1>
-          <div className="header-actions">
-            <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8 }}>
+    <>
+      <header className="site-header" role="banner">
+        <div className="container header-inner">
+          <div className="header-left">
+            <h1 className="site-title"><Link to="/">Kisallat webshop</Link></h1>
+            <form onSubmit={handleSearch} className="header-search desktop-only">
               <input className="search-input" aria-label="Kereses" placeholder="Kereses (tap, poraz...)" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-              <button type="submit" className="search-btn" aria-label="Kereses" style={{padding:'8px 14px'}}>Keres</button>
+              <button type="submit" className="search-btn">Keres</button>
             </form>
           </div>
-        </div>
-        <nav className="site-nav" role="navigation">
-          <ul>
-            <li><Link className="klink" to="/">Kezdolap</Link></li>
-            <li><Link className="klink" to="/about">Rolunk</Link></li>
-            <li><Link className="klink" to="/tips">Tippek</Link></li>
-            {!isAuthenticated && (
-              <li><Link className="klink" to="/auth">Bejelentkezes / Regisztracio</Link></li>
-            )}
-            {isAuthenticated && (
-              <li className="user-menu" style={{ position: 'relative' }}>
-                <button onClick={() => setOpenMenu(prev => !prev)} style={{ background:'none', border:'none', color:'var(--text-primary)', cursor:'pointer', fontWeight:700 }}>
-                  {user?.felhasznalonev || 'Fiok'}
+
+          <nav className="site-nav desktop-only" role="navigation">
+            <ul>
+              <li><Link className="klink" to="/">Kezdolap</Link></li>
+              <li><Link className="klink" to="/about">Rolunk</Link></li>
+              <li><Link className="klink" to="/tips">Tippek</Link></li>
+              {!isAuthenticated && (
+                <li><Link className="klink auth-btn" to="/auth">Bejelentkezes</Link></li>
+              )}
+              {isAuthenticated && (
+                <li className="user-menu" style={{ position: 'relative' }}>
+                  <button onClick={() => setOpenMenu(prev => !prev)} className="user-menu-btn">
+                    {isAdmin && <span className="admin-dot" />}
+                    {user?.felhasznalonev || 'Fiok'}
+                  </button>
+                  {openMenu && (
+                    <div className="dropdown-menu">
+                      <div className="dropdown-header">
+                        <p className="dropdown-name">{user?.felhasznalonev}</p>
+                        <p className="dropdown-email">{user?.email}</p>
+                        {isAdmin && <span className="dropdown-admin-badge">Admin</span>}
+                      </div>
+                      <div className="dropdown-divider" />
+                      {isAdmin && (
+                        <>
+                          <button onClick={() => navTo('/admin')} className="dropdown-item dropdown-item-admin">Admin panel</button>
+                          <button onClick={() => navTo('/admin/products')} className="dropdown-item dropdown-item-admin">Termekek kezelese</button>
+                          <button onClick={() => navTo('/admin/users')} className="dropdown-item dropdown-item-admin">Felhasznalok</button>
+                          <button onClick={() => navTo('/admin/coupons')} className="dropdown-item dropdown-item-admin">Kuponok kezelese</button>
+                          <div className="dropdown-divider" />
+                        </>
+                      )}
+                      <button onClick={() => navTo('/orders')} className="dropdown-item">Rendeleseim</button>
+                      <button onClick={() => navTo('/coupons')} className="dropdown-item">Kuponjaim</button>
+                      <button onClick={() => navTo('/wall')} className="dropdown-item">Fal & Velemenyek</button>
+                      <div className="dropdown-divider" />
+                      <button onClick={() => { logout(); navTo('/'); }} className="dropdown-item dropdown-item-danger">Kijelentkezes</button>
+                    </div>
+                  )}
+                </li>
+              )}
+              <li>
+                <Link className="klink" to="/favorites" style={{ position: 'relative' }}>
+                  Kedvencek
+                  {favoritesCount > 0 && <span className="badge badge-danger" style={{ position: 'absolute', top: -6, right: -10 }}>{favoritesCount}</span>}
+                </Link>
+              </li>
+              <li>
+                <button onClick={toggleDarkMode} className="klink theme-toggle" title={darkMode ? 'Vilagos mod' : 'Sotet mod'}>
+                  {darkMode ? 'Vilagos' : 'Sotet'}
                 </button>
-                {openMenu && (
-                  <div style={{ position:'absolute', top:'110%', right:0, background:'white', borderRadius:12, boxShadow:'0 10px 30px rgba(15,23,42,0.16)', padding:12, minWidth:180, zIndex:20 }}>
-                    <p style={{ margin:'0 0 8px', fontWeight:700 }}>{user?.email}</p>
-                    {isAdmin && <button onClick={() => { setOpenMenu(false); navigate('/admin'); }} style={{ width:'100%', background:'linear-gradient(135deg,#0ea5e9,#2563eb)', color:'white', border:'none', borderRadius:8, padding:'10px 12px', cursor:'pointer', fontWeight:700, marginBottom:8 }}>Admin</button>}
-                    <button onClick={() => { setOpenMenu(false); navigate('/orders'); }} style={{ width:'100%', background:'var(--accent-gradient)', color:'white', border:'none', borderRadius:8, padding:'10px 12px', cursor:'pointer', fontWeight:700, marginBottom:8 }}>Rendeleseim</button>
-                    <button onClick={() => { setOpenMenu(false); navigate('/coupons'); }} style={{ width:'100%', background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'white', border:'none', borderRadius:8, padding:'10px 12px', cursor:'pointer', fontWeight:700, marginBottom:8 }}>Kuponjaim</button>
-                    <button onClick={() => { setOpenMenu(false); navigate('/wall'); }} style={{ width:'100%', background:'linear-gradient(135deg,#8b5cf6,#7c3aed)', color:'white', border:'none', borderRadius:8, padding:'10px 12px', cursor:'pointer', fontWeight:700, marginBottom:8 }}>Velemenyek & Fal</button>
-                    <button onClick={() => { logout(); setOpenMenu(false); navigate('/'); }} style={{ width:'100%', background:'linear-gradient(135deg,#ef4444,#dc2626)', color:'white', border:'none', borderRadius:8, padding:'10px 12px', cursor:'pointer', fontWeight:700 }}>Kijelentkezes</button>
+              </li>
+              <li>
+                <Link className="klink" to="/cart" style={{ position: 'relative' }}>
+                  Kosar
+                  {itemCount > 0 && <span className="badge badge-primary" style={{ position: 'absolute', top: -6, right: -10 }}>{itemCount > 99 ? '99+' : itemCount}</span>}
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Mobile: right side icons */}
+          <div className="mobile-header-right mobile-only">
+            <Link to="/cart" className="mobile-icon-btn" style={{ position: 'relative' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              {itemCount > 0 && <span className="badge badge-primary mobile-badge">{itemCount > 99 ? '99+' : itemCount}</span>}
+            </Link>
+            <button onClick={toggleDarkMode} className="mobile-icon-btn" title={darkMode ? 'Vilagos mod' : 'Sotet mod'}>
+              {darkMode ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              )}
+            </button>
+            <button className="hamburger-btn" onClick={() => setMobileNav(prev => !prev)} aria-label="Menu">
+              {mobileNav ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile navigation overlay */}
+      {mobileNav && (
+        <div className="mobile-nav-overlay" onClick={() => setMobileNav(false)}>
+          <nav className="mobile-nav" onClick={(e) => e.stopPropagation()}>
+            <form onSubmit={handleSearch} className="mobile-search">
+              <input className="search-input" placeholder="Kereses..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit" className="search-btn">Keres</button>
+            </form>
+
+            <div className="mobile-nav-section">
+              <button onClick={() => navTo('/')} className="mobile-nav-item">Kezdolap</button>
+              <button onClick={() => navTo('/about')} className="mobile-nav-item">Rolunk</button>
+              <button onClick={() => navTo('/tips')} className="mobile-nav-item">Tippek</button>
+              <button onClick={() => navTo('/favorites')} className="mobile-nav-item">
+                Kedvencek {favoritesCount > 0 && <span className="badge badge-danger">{favoritesCount}</span>}
+              </button>
+              <button onClick={() => navTo('/cart')} className="mobile-nav-item">
+                Kosar {itemCount > 0 && <span className="badge badge-primary">{itemCount}</span>}
+              </button>
+            </div>
+
+            {!isAuthenticated && (
+              <div className="mobile-nav-section">
+                <button onClick={() => navTo('/auth')} className="mobile-nav-item mobile-nav-auth">Bejelentkezes / Regisztracio</button>
+              </div>
+            )}
+
+            {isAuthenticated && (
+              <>
+                <div className="mobile-nav-section">
+                  <div className="mobile-nav-user">
+                    <strong>{user?.felhasznalonev}</strong>
+                    <span>{user?.email}</span>
+                  </div>
+                  <button onClick={() => navTo('/orders')} className="mobile-nav-item">Rendeleseim</button>
+                  <button onClick={() => navTo('/coupons')} className="mobile-nav-item">Kuponjaim</button>
+                  <button onClick={() => navTo('/wall')} className="mobile-nav-item">Fal & Velemenyek</button>
+                </div>
+
+                {isAdmin && (
+                  <div className="mobile-nav-section mobile-nav-admin">
+                    <p className="mobile-nav-label">Admin</p>
+                    <button onClick={() => navTo('/admin')} className="mobile-nav-item">Admin panel</button>
+                    <button onClick={() => navTo('/admin/products')} className="mobile-nav-item">Termekek kezelese</button>
+                    <button onClick={() => navTo('/admin/users')} className="mobile-nav-item">Felhasznalok</button>
+                    <button onClick={() => navTo('/admin/coupons')} className="mobile-nav-item">Kuponok kezelese</button>
                   </div>
                 )}
-              </li>
+
+                <div className="mobile-nav-section">
+                  <button onClick={() => { logout(); navTo('/'); }} className="mobile-nav-item mobile-nav-logout">Kijelentkezes</button>
+                </div>
+              </>
             )}
-            <li>
-              <Link className="klink" to="/favorites" style={{ position:'relative' }}>
-                Kedvencek
-                {favoritesCount > 0 && <span style={{ position:'absolute', top:-8, right:-8, background:'linear-gradient(135deg,#ec4899,#db2777)', color:'white', borderRadius:'50%', width:20, height:20, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.7rem', fontWeight:800 }}>{favoritesCount}</span>}
-              </Link>
-            </li>
-            <li>
-              <button onClick={toggleDarkMode} className="klink" style={{ background:'none', border:'none', cursor:'pointer', fontSize:'1.2rem', padding:8 }} title={darkMode ? 'Vilagos mod' : 'Sotet mod'}>
-                {darkMode ? 'Vilagos' : 'Sotet'}
-              </button>
-            </li>
-            <li>
-              <Link className="klink" to="/cart" style={{ position:'relative' }}>
-                Kosar
-                {itemCount > 0 && <span style={{ position:'absolute', top:-8, right:-8, background:'linear-gradient(135deg,#ef4444,#dc2626)', color:'white', borderRadius:'50%', width:24, height:24, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.75rem', fontWeight:800 }}>{itemCount > 99 ? '99+' : itemCount}</span>}
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+          </nav>
+        </div>
+      )}
+    </>
   );
 };
 

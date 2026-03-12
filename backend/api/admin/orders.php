@@ -82,10 +82,10 @@ if ($method === 'GET') {
  * Összes rendelés listázása
  */
 function getAllOrders($db) {
-    $query = "SELECT r.*, r.`rendelés_szam` AS rendeles_szam,
+    $query = "SELECT r.*, r.rendeles_szam,
                      f.felhasznalonev, f.email, f.telefon,
                      COUNT(rt.id) as tetelek_szama
-              FROM `rendelések` r
+              FROM rendelesek r
               LEFT JOIN felhasznalok f ON r.felhasznalo_id = f.id
               LEFT JOIN rendeles_tetelek rt ON r.id = rt.rendeles_id
               GROUP BY r.id
@@ -102,9 +102,9 @@ function getAllOrders($db) {
  */
 function getOrderDetails($db, $id) {
     // Rendelés fej
-    $query = "SELECT r.*, r.`rendelés_szam` AS rendeles_szam,
+    $query = "SELECT r.*, r.rendeles_szam,
                      f.felhasznalonev, f.email, f.telefon, f.keresztnev, f.vezeteknev
-              FROM `rendelések` r
+              FROM rendelesek r
               LEFT JOIN felhasznalok f ON r.felhasznalo_id = f.id
               WHERE r.id = :id";
     
@@ -147,22 +147,15 @@ function updateOrderStatus($db, $id) {
         return;
     }
 
-    $statusMap = [
-        'uj' => 'új',
-        'feldolgozas' => 'feldolgozás',
-        'kesz' => 'kész',
-        'storno' => 'stornó'
-    ];
-    $normalizedStatus = $statusMap[$data->statusz] ?? $data->statusz;
-
-    $valid_statuses = ['új', 'feldolgozás', 'fizetve', 'kész', 'stornó', 'uj', 'feldolgozas', 'kesz', 'storno'];
+    $normalizedStatus = $data->statusz;
+    $valid_statuses = ['uj', 'feldolgozas', 'fizetve', 'kesz', 'storno'];
     if (!in_array($normalizedStatus, $valid_statuses, true)) {
         http_response_code(400);
         echo json_encode(['message' => 'Érvénytelen státusz']);
         return;
     }
 
-    $query = "UPDATE `rendelések` SET statusz = :statusz WHERE id = :id";
+    $query = "UPDATE rendelesek SET statusz = :statusz WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':statusz', $normalizedStatus);
     $stmt->bindParam(':id', $id);
@@ -179,7 +172,7 @@ function updateOrderStatus($db, $id) {
  * Rendelés törlése
  */
 function deleteOrder($db, $id) {
-    $query = "DELETE FROM `rendelések` WHERE id = :id";
+    $query = "DELETE FROM rendelesek WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':id', $id);
 
@@ -196,9 +189,9 @@ function deleteOrder($db, $id) {
  */
 function generateInvoice($db, $id) {
     // Rendelés adatok
-    $query = "SELECT r.*, r.`rendelés_szam` AS rendeles_szam,
+    $query = "SELECT r.*, r.rendeles_szam,
                      f.felhasznalonev, f.email, f.telefon, f.keresztnev, f.vezeteknev
-              FROM `rendelések` r
+              FROM rendelesek r
               LEFT JOIN felhasznalok f ON r.felhasznalo_id = f.id
               WHERE r.id = :id";
     

@@ -60,11 +60,27 @@ function uploadImage() {
 
     // Fájl mozgatása
     if (move_uploaded_file($file['tmp_name'], $filepath)) {
-        $url = '/uploads/' . $filename;
+        $relativeUrl = '/uploads/' . $filename;
+
+        // Projekt gyökér útvonal becslése a script útvonalból
+        $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+        $projectPath = preg_replace('#/backend/api/upload\.php$#', '', $scriptName);
+        if ($projectPath === null) {
+            $projectPath = '';
+        }
+
+        $projectRelativeUrl = rtrim($projectPath, '/') . $relativeUrl;
+
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (isset($_SERVER['SERVER_PORT']) && (string)$_SERVER['SERVER_PORT'] === '443');
+        $scheme = $isHttps ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $absoluteUrl = $scheme . '://' . $host . $projectRelativeUrl;
         
         echo json_encode([
             'message' => 'Kép sikeresen feltöltve',
-            'url' => $url,
+            'url' => $projectRelativeUrl,
+            'absolute_url' => $absoluteUrl,
             'filename' => $filename
         ]);
     } else {

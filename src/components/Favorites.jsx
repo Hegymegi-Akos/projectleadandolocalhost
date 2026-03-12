@@ -1,6 +1,7 @@
 import React from 'react';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useCart } from '../contexts/CartContext';
+import { resolveMediaUrl } from '../api/apiService';
 
 const Favorites = () => {
   const { favorites, toggleFavorite, clearFavorites } = useFavorites();
@@ -17,7 +18,17 @@ const Favorites = () => {
           <div className="content">
             {favorites.map(product => (
               <div key={product.id} className="box">
-                {product.img && <img src={product.img} alt={product.name} loading="lazy" />}
+                {product.img && (
+                  <img
+                    src={resolveMediaUrl(product.img)}
+                    alt={product.name}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/kutya.png';
+                    }}
+                  />
+                )}
                 <h2>{product.name}</h2>
                 <p style={{ fontSize:'1.2rem', fontWeight:800, color:'var(--accent-primary)' }}>{product.price?.toLocaleString('hu-HU')} Ft</p>
                 <div style={{ display:'flex', gap:8, padding:'0 20px 20px' }}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useFavorites } from '../contexts/FavoritesContext';
-import { productsAPI } from '../api/apiService';
+import { productsAPI, resolveMediaUrl } from '../api/apiService';
 import QuickViewModal from './QuickViewModal';
 
 const ProductList = ({ title, category, subcategory }) => {
@@ -65,13 +65,31 @@ const ProductList = ({ title, category, subcategory }) => {
             const favorite = isFavorite(product.id);
             return (
               <div key={product.id} className="box" style={{ position:'relative' }}>
-                <button onClick={() => toggleFavorite(cartProduct)} style={{ position:'absolute', top:10, right:10, background:'white', border:'none', borderRadius:'50%', width:36, height:36, cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.15)', fontSize:'1.2rem', zIndex:5 }}>
-                  {favorite ? 'x' : '+'}
-                </button>
-                <button onClick={() => setQuickViewProduct(cartProduct)} style={{ position:'absolute', top:10, left:10, background:'white', border:'none', borderRadius:'50%', width:36, height:36, cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.15)', zIndex:5 }}>
-                  Nezd
-                </button>
-                <img src={product.fo_kep} alt={product.nev} loading="lazy" />
+                <div style={{ position: 'absolute', top: 10, left: 10, right: 10, display: 'flex', justifyContent: 'space-between', zIndex: 5 }}>
+                  <button
+                    onClick={() => setQuickViewProduct(cartProduct)}
+                    className="btn-secondary"
+                    style={{ padding: '6px 10px', fontSize: '0.75rem', borderRadius: 999 }}
+                  >
+                    Gyors nezet
+                  </button>
+                  <button
+                    onClick={() => toggleFavorite(cartProduct)}
+                    className={favorite ? 'btn-danger' : 'btn-secondary'}
+                    style={{ padding: '6px 10px', fontSize: '0.75rem', borderRadius: 999 }}
+                  >
+                    {favorite ? 'Kedvenc -' : 'Kedvenc +'}
+                  </button>
+                </div>
+                <img
+                  src={resolveMediaUrl(product.fo_kep)}
+                  alt={product.nev}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/images/kutya.png';
+                  }}
+                />
                 <h2>{product.nev}</h2>
                 <p>{product.rovid_leiras}</p>
                 {product.akcios_ar && <p style={{ textDecoration:'line-through', color:'var(--text-muted)', fontSize:'0.9rem' }}>{product.ar?.toLocaleString('hu-HU')} Ft</p>}

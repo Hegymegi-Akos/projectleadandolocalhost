@@ -50,15 +50,31 @@ function createOrder($db) {
         // Rendelésszám generálása
         $rendeles_szam = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
 
-        // Összeg kiszámítása
+        // Összeg kiszámítása - termék árak lekérése adatbázisból
         $osszeg = 0;
+        $tetel_adatok = [];
         foreach ($data->tetelek as $tetel) {
-            $osszeg += $tetel->ar * $tetel->mennyiseg;
+            $termek_id = (int)($tetel->termek_id ?? $tetel->id ?? 0);
+            $mennyiseg = (int)($tetel->mennyiseg ?? 1);
+            $q = "SELECT id, nev, ar, akcios_ar FROM termekek WHERE id = :id AND aktiv = 1";
+            $s = $db->prepare($q);
+            $s->bindValue(':id', $termek_id);
+            $s->execute();
+            $termek = $s->fetch();
+            if (!$termek) {
+                $db->rollBack();
+                http_response_code(400);
+                echo json_encode(['message' => 'Termék nem található: ID ' . $termek_id]);
+                return;
+            }
+            $ar = $termek['akcios_ar'] ?: $termek['ar'];
+            $osszeg += $ar * $mennyiseg;
+            $tetel_adatok[] = ['termek_id' => $termek['id'], 'termek_nev' => $termek['nev'], 'ar' => $ar, 'mennyiseg' => $mennyiseg];
         }
 
         // Rendelés fej beszúrása
-        $query = "INSERT INTO `rendelések` (felhasznalo_id, `rendelés_szam`, statusz, osszeg, szallitasi_mod, fizetesi_mod, megjegyzes, szallitasi_nev, szallitasi_cim, szallitasi_varos, szallitasi_irsz)
-              VALUES (:felhasznalo_id, :rendeles_szam, 'új', :osszeg, :szallitasi_mod, :fizetesi_mod, :megjegyzes, :szallitasi_nev, :szallitasi_cim, :szallitasi_varos, :szallitasi_irsz)";
+        $query = "INSERT INTO rendelesek (felhasznalo_id, rendeles_szam, statusz, osszeg, szallitasi_mod, fizetesi_mod, megjegyzes, szallitasi_nev, szallitasi_cim, szallitasi_varos, szallitasi_irsz)
+              VALUES (:felhasznalo_id, :rendeles_szam, 'uj', :osszeg, :szallitasi_mod, :fizetesi_mod, :megjegyzes, :szallitasi_nev, :szallitasi_cim, :szallitasi_varos, :szallitasi_irsz)";
         
         $stmt = $db->prepare($query);
         $stmt->bindValue(':felhasznalo_id', (int)$user['user_id']);
@@ -81,25 +97,25 @@ function createOrder($db) {
         
         $tetel_stmt = $db->prepare($tetel_query);
 
-        foreach ($data->tetelek as $tetel) {
+        foreach ($tetel_adatok as $tetel) {
             $tetel_stmt->bindValue(':rendeles_id', (int)$rendeles_id);
-            $tetel_stmt->bindValue(':termek_id', (int)$tetel->id);
-            $tetel_stmt->bindValue(':termek_nev', $tetel->name);
-            $tetel_stmt->bindValue(':ar', $tetel->ar);
-            $tetel_stmt->bindValue(':mennyiseg', (int)$tetel->mennyiseg);
+            $tetel_stmt->bindValue(':termek_id', (int)$tetel['termek_id']);
+            $tetel_stmt->bindValue(':termek_nev', $tetel['termek_nev']);
+            $tetel_stmt->bindValue(':ar', $tetel['ar']);
+            $tetel_stmt->bindValue(':mennyiseg', (int)$tetel['mennyiseg']);
             $tetel_stmt->execute();
 
             // Készlet csökkentése
             $update_query = "UPDATE termekek SET keszlet = keszlet - :mennyiseg WHERE id = :id AND keszlet >= :mennyiseg";
             $update_stmt = $db->prepare($update_query);
-            $update_stmt->bindValue(':mennyiseg', (int)$tetel->mennyiseg);
-            $update_stmt->bindValue(':id', (int)$tetel->id);
+            $update_stmt->bindValue(':mennyiseg', (int)$tetel['mennyiseg']);
+            $update_stmt->bindValue(':id', (int)$tetel['termek_id']);
             $update_stmt->execute();
 
             if ($update_stmt->rowCount() === 0) {
                 $db->rollBack();
                 http_response_code(400);
-                echo json_encode(['message' => 'Nincs elegendő készlet: ' . $tetel->name]);
+                echo json_encode(['message' => 'Nincs elegendő készlet: ' . $tetel['termek_nev']]);
                 return;
             }
         }
@@ -132,8 +148,8 @@ function createOrder($db) {
 function getMyOrders($db) {
     $user = requireAuth();
 
-    $query = "SELECT r.*, r.`rendelés_szam` AS rendeles_szam, COUNT(rt.id) as tetelek_szama
-              FROM `rendelések` r
+    $query = "SELECT r.*, r.rendeles_szam AS rendeles_szam, COUNT(rt.id) as tetelek_szama
+              FROM rendelesek r
               LEFT JOIN rendeles_tetelek rt ON r.id = rt.rendeles_id
               WHERE r.felhasznalo_id = :felhasznalo_id
               GROUP BY r.id
@@ -153,7 +169,7 @@ function getOrderById($db, $id) {
     $user = requireAuth();
 
     // Rendelés fej
-    $query = "SELECT *, `rendelés_szam` AS rendeles_szam FROM `rendelések` WHERE id = :id AND felhasznalo_id = :felhasznalo_id";
+    $query = "SELECT *, rendeles_szam AS rendeles_szam FROM rendelesek WHERE id = :id AND felhasznalo_id = :felhasznalo_id";
     $stmt = $db->prepare($query);
     $stmt->bindValue(':id', (int)$id);
     $stmt->bindValue(':felhasznalo_id', (int)$user['user_id']);

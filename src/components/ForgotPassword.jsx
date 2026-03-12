@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '';
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_u97w4rk';
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_mcjlomk';
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost/frobacksql/backend/api';
 
@@ -20,7 +20,7 @@ const ForgotPassword = () => {
 
   const handleRequestCode = async (e) => {
     e.preventDefault();
-    setError(''); setLoading(true);
+    setError(''); setSuccess(''); setLoading(true);
     try {
       const response = await fetch(`${API_URL}/password-reset.php/request`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -28,19 +28,23 @@ const ForgotPassword = () => {
       });
       const data = await response.json();
       if (data.success && data.kod) {
-        if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-          setError('EmailJS nincs konfigurálva. Állítsd be a VITE_EMAILJS_* változókat.');
-          setStep(2);
+        if (!EMAILJS_PUBLIC_KEY) {
+          setError('Hiányzik a Public Key. Add meg a VITE_EMAILJS_PUBLIC_KEY értéket a .env fájlban.');
           return;
         }
+
         try {
           await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
             email, jelszo: data.kod, time: new Date(data.lejar).toLocaleString('hu-HU')
           }, EMAILJS_PUBLIC_KEY);
-          setSuccess('A kodot elkuld az email cimedre!');
+          setSuccess('A kodot elkuldtuk az email cimedre!');
           setStep(2);
-        } catch { setError('Email kuldesi hiba. A kod: ' + data.kod); setStep(2); }
-      } else { setError(data.message || 'Hiba tortent'); }
+        } catch {
+          setError('Email kuldesi hiba. Ellenorizd az EmailJS beallitasokat.');
+        }
+      } else {
+        setError(data.message || 'Hiba tortent');
+      }
     } catch { setError('Szerver hiba'); }
     finally { setLoading(false); }
   };
@@ -82,6 +86,12 @@ const ForgotPassword = () => {
       <section className="ui-card" style={{ maxWidth: 500, margin: '0 auto' }}>
         {error && <div style={{ color:'#ef4444', padding:12, background:'#fef2f2', borderRadius:8, marginBottom:12 }}>{error}</div>}
         {success && <div style={{ color:'#22c55e', padding:12, background:'#f0fdf4', borderRadius:8, marginBottom:12 }}>{success}</div>}
+
+        {step === 1 && !EMAILJS_PUBLIC_KEY && (
+          <div style={{ color:'#92400e', padding:12, background:'#fffbeb', borderRadius:8, marginBottom:12, fontSize:'0.9rem' }}>
+            A jelszo-visszaallitashoz add meg a .env-ben: VITE_EMAILJS_PUBLIC_KEY.
+          </div>
+        )}
 
         {step === 1 && (
           <form onSubmit={handleRequestCode} className="form-grid">

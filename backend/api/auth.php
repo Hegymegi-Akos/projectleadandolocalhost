@@ -10,6 +10,8 @@ require_once '../config/jwt.php';
 $database = new Database();
 $db = $database->getConnection();
 
+ensureUserBanColumns($db);
+
 $method = $_SERVER['REQUEST_METHOD'];
 $request_uri = $_SERVER['REQUEST_URI'];
 
@@ -92,6 +94,25 @@ function register($db) {
     }
 }
 
+function ensureUserBanColumns($db) {
+    $hasTiltva = false;
+    $hasTiltasOka = false;
+
+    $stmt = $db->query("SHOW COLUMNS FROM felhasznalok LIKE 'tiltva'");
+    $hasTiltva = (bool)$stmt->fetch();
+
+    $stmt = $db->query("SHOW COLUMNS FROM felhasznalok LIKE 'tiltas_oka'");
+    $hasTiltasOka = (bool)$stmt->fetch();
+
+    if (!$hasTiltva) {
+        $db->exec("ALTER TABLE felhasznalok ADD COLUMN tiltva TINYINT(1) NOT NULL DEFAULT 0 AFTER admin");
+    }
+
+    if (!$hasTiltasOka) {
+        $db->exec("ALTER TABLE felhasznalok ADD COLUMN tiltas_oka VARCHAR(255) NULL AFTER tiltva");
+    }
+}
+
 /**
  * Bejelentkezés
  */
@@ -108,7 +129,7 @@ function login($db) {
     }
 
     // Felhasználó keresése
-    $query = "SELECT id, felhasznalonev, email, jelszo_hash, admin, keresztnev, vezeteknev 
+    $query = "SELECT id, felhasznalonev, email, jelszo_hash, admin, tiltva, tiltas_oka, keresztnev, vezeteknev 
               FROM felhasznalok 
               WHERE felhasznalonev = :identifier OR email = :identifier";
     
@@ -128,6 +149,17 @@ function login($db) {
     if (!password_verify($password, $user['jelszo_hash'])) {
         http_response_code(401);
         echo json_encode(['message' => 'Hibás felhasználónév vagy jelszó']);
+        return;
+    }
+
+    if (!empty($user['tiltva'])) {
+        http_response_code(403);
+        $reason = trim((string)($user['tiltas_oka'] ?? ''));
+        $msg = 'A fiókod jelenleg tiltva van.';
+        if ($reason !== '') {
+            $msg .= ' Ok: ' . $reason;
+        }
+        echo json_encode(['message' => $msg]);
         return;
     }
 

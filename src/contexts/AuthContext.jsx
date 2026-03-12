@@ -10,21 +10,34 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(authAPI.getStoredUser());
+  const getToken = () => localStorage.getItem('token');
+  const [user, setUser] = useState(() => (getToken() ? authAPI.getStoredUser() : null));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const initUser = async () => {
-      if (!user && localStorage.getItem('token')) {
+      const token = getToken();
+
+      if (!token) {
+        if (user) setUser(null);
+        return;
+      }
+
+      if (!user) {
         try {
           const me = await authAPI.getCurrentUser();
           if (me && me.id) {
             setUser(me);
             localStorage.setItem('user', JSON.stringify(me));
+          } else {
+            authAPI.logout();
+            setUser(null);
           }
         } catch (err) {
           console.error('Nem sikerült beolvasni a felhasználót', err);
+          authAPI.logout();
+          setUser(null);
         }
       }
     };
@@ -69,7 +82,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, error, login, register, logout, setError }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user && !!getToken(), loading, error, login, register, logout, setError }}>
       {children}
     </AuthContext.Provider>
   );

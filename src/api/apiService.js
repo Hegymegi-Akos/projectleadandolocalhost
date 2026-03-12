@@ -4,6 +4,7 @@
 
 const PHP_API_URL = import.meta.env.VITE_API_URL || 'http://localhost/frobacksql/backend/api';
 const CS_API_URL = import.meta.env.VITE_API_URL_CS || 'http://localhost:5156/api';
+const PHP_BASE_URL = PHP_API_URL.replace(/\/backend\/api\/?$/, '');
 
 const USE_CS_PRODUCTS = import.meta.env.VITE_USE_CS_PRODUCTS === 'true';
 const USE_CS_CATEGORIES = import.meta.env.VITE_USE_CS_CATEGORIES === 'true';
@@ -15,7 +16,8 @@ const allowedAdminValues = new Set(
 );
 
 const hasAdminFlag = (user) => user?.admin === 1 || user?.admin === true || user?.admin === '1';
-const getAdminSecret = () => sessionStorage.getItem('adminSecret') || '';
+const ADMIN_SECRET = 'Admin123';
+const getAdminSecret = () => sessionStorage.getItem('adminSecret') || ADMIN_SECRET;
 
 export const isAllowedAdminUser = (user) => {
   if (!hasAdminFlag(user)) return false;
@@ -23,6 +25,13 @@ export const isAllowedAdminUser = (user) => {
   const candidates = [user?.email, user?.felhasznalonev, user?.id?.toString()]
     .map((v) => v?.toLowerCase()).filter(Boolean);
   return candidates.some((value) => allowedAdminValues.has(value));
+};
+
+export const resolveMediaUrl = (value) => {
+  if (!value) return '';
+  if (/^https?:\/\//i.test(value)) return value;
+  const normalized = value.startsWith('/') ? value : `/${value}`;
+  return `${PHP_BASE_URL}${normalized}`;
 };
 
 const enforceAdminAccess = () => {
@@ -75,6 +84,9 @@ export const authAPI = {
     if (response.ok && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user || {}));
+      if (data.user && hasAdminFlag(data.user)) {
+        sessionStorage.setItem('adminSecret', ADMIN_SECRET);
+      }
     }
     return data;
   },
@@ -93,6 +105,7 @@ export const authAPI = {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('adminSecret');
   },
   async getCurrentUser() {
     const response = await fetch(`${PHP_API_URL}/auth.php/me`, { headers: getHeaders() });
@@ -295,6 +308,19 @@ export const adminUsersAPI = {
       return await adminFetch(`${CS_API_URL}/Felhasznalok`, { headers: withAdminHeaders(getHeaders()) });
     }
     return await adminFetch(`${PHP_API_URL}/admin/users.php`, { headers: withAdminHeaders(getHeaders()) });
+  },
+  async setBanStatus(id, tiltva, tiltas_oka = '') {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/users.php`, {
+      method: 'POST',
+      headers: withAdminHeaders(getHeaders()),
+      body: JSON.stringify({
+        id: Number(id),
+        _method: 'PUT',
+        tiltva: tiltva ? 1 : 0,
+        tiltas_oka
+      })
+    });
   }
 };
 
@@ -334,7 +360,11 @@ export const uploadAPI = {
       method: 'POST', headers: withAdminHeaders(getHeaders(true)),
       body: formData
     });
-    return await response.json();
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Kép feltöltése sikertelen');
+    }
+    return data;
   }
 };
 

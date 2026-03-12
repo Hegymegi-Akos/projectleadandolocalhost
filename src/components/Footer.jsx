@@ -1,23 +1,35 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
     <footer className="footer" role="contentinfo">
-      <div className="container" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:20, padding:'36px 16px 18px', color:'#e6f0f6' }}>
+      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32, padding: '48px 24px 24px' }}>
         <div>
-          <h4 style={{color:'#fff'}}>Kisallat webshop</h4>
-          <p>Minosegi allateledel es kiegeszitok - gyors kiszallitas.</p>
+          <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: 12 }}>Kisallat webshop</h4>
+          <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.6 }}>
+            Minosegi allateledel es kiegeszitok - gyors kiszallitas szerte az orszagban.
+          </p>
         </div>
         <div>
-          <h4 style={{color:'#fff'}}>Kapcsolat</h4>
-          <p>info@kisallatwebshop.hu<br/>+36 30 123 4567</p>
+          <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: 12 }}>Kapcsolat</h4>
+          <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.8 }}>
+            info@kisallatwebshop.hu<br />
+            +36 30 123 4567<br />
+            Budapest, Pet utca 12.
+          </p>
         </div>
         <div>
-          <h4 style={{color:'#fff'}}>Gyors linkek</h4>
-          <p><a href="/" style={{color:'#d9ecff'}}>Kezdolap</a><br/><a href="/about" style={{color:'#d9ecff'}}>Rolunk</a><br/><a href="/gallery" style={{color:'#d9ecff'}}>Galeria</a></p>
+          <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: 12 }}>Gyors linkek</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <Link to="/" style={{ color: '#94a3b8', fontSize: '0.9rem', textDecoration: 'none', transition: 'color 200ms' }}>Kezdolap</Link>
+            <Link to="/about" style={{ color: '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}>Rolunk</Link>
+            <Link to="/gallery" style={{ color: '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}>Galeria</Link>
+            <Link to="/tips" style={{ color: '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}>Tippek</Link>
+          </div>
         </div>
       </div>
-      <div style={{ textAlign:'center', padding:'16px', color:'rgba(230,240,246,0.8)', fontSize:14 }}>
+      <div style={{ textAlign: 'center', padding: '20px 24px', borderTop: '1px solid rgba(255,255,255,0.06)', color: 'rgba(148,163,184,0.7)', fontSize: '0.825rem' }}>
         &copy; {new Date().getFullYear()} Kisallat Webshop. Minden jog fenntartva.
       </div>
     </footer>
