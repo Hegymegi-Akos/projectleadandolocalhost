@@ -395,33 +395,21 @@ function deleteProduct($db, $id) {
         return;
     }
 
-    $query = "DELETE FROM termekek WHERE id = :id";
-    $stmt = $db->prepare($query);
-    $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
-
     try {
-        if ($stmt->execute()) {
-            echo json_encode(['message' => 'Termék sikeresen törölve']);
-            return;
-        }
-
-        http_response_code(500);
-        echo json_encode(['message' => 'Termék törlése sikertelen']);
+        $db->beginTransaction();
+        // Rendeles tetelek torlese (FK nincs CASCADE)
+        $db->prepare("DELETE FROM rendeles_tetelek WHERE termek_id = :id")->execute([':id' => (int)$id]);
+        // Kosar es velemenyek CASCADE-del toroldnek, de biztonsagbol:
+        $db->prepare("DELETE FROM kosar WHERE termek_id = :id")->execute([':id' => (int)$id]);
+        $db->prepare("DELETE FROM termek_velemenyek WHERE termek_id = :id")->execute([':id' => (int)$id]);
+        // Termek torlese
+        $db->prepare("DELETE FROM termekek WHERE id = :id")->execute([':id' => (int)$id]);
+        $db->commit();
+        echo json_encode(['message' => 'Termék sikeresen törölve']);
     } catch (PDOException $e) {
-        // FK constraint tipikusan akkor, ha rendelés tételben szerepel.
-        // MariaDB/MySQL: 1451 cannot delete or update a parent row
-        $sqlState = $e->getCode();
-        $msg = $e->getMessage();
-        if (strpos($msg, '1451') !== false || stripos($msg, 'foreign key') !== false) {
-            http_response_code(409);
-            echo json_encode([
-                'message' => 'A termék nem törölhető, mert rendelés(ek)ben szerepel. Javaslat: állítsd inaktívra (aktiv=0).'
-            ]);
-            return;
-        }
-
+        $db->rollBack();
         http_response_code(500);
-        echo json_encode(['message' => 'Termék törlése sikertelen', 'error' => $sqlState]);
+        echo json_encode(['message' => 'Termék törlése sikertelen: ' . $e->getMessage()]);
     }
 }
 

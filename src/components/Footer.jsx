@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
   return (
     <footer className="footer" role="contentinfo">
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32, padding: '48px 24px 24px' }}>
+      <div className="container footer-grid">
         <div>
           <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: 12 }}>Kisallat webshop</h4>
           <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.6 }}>

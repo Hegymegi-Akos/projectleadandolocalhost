@@ -36,6 +36,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/users', label: 'Felhasznalok', icon: '👥' },
     { path: '/admin/orders', label: 'Rendelesek', icon: '🛒' },
     { path: '/admin/coupons', label: 'Kuponok', icon: '🎫' },
+    { path: '/admin/categories', label: 'Kategoriak', icon: '📂' },
   ];
 
   const pageTitleMap = {
@@ -44,6 +45,7 @@ const AdminLayout = ({ children }) => {
     '/admin/users': 'Felhasznalo kezeles',
     '/admin/orders': 'Rendeles kezeles',
     '/admin/coupons': 'Kupon kezeles',
+    '/admin/categories': 'Kategoria kezeles',
   };
 
   const isActive = (path) => location.pathname === path;

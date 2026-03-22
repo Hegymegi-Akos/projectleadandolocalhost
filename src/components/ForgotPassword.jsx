@@ -83,7 +83,7 @@ const ForgotPassword = () => {
   return (
     <main className="container page">
       <h1 className="page-title">Elfelejtett jelszo</h1>
-      <section className="ui-card" style={{ maxWidth: 500, margin: '0 auto' }}>
+      <section className="ui-card centered-card">
         {error && <div style={{ color:'#ef4444', padding:12, background:'#fef2f2', borderRadius:8, marginBottom:12 }}>{error}</div>}
         {success && <div style={{ color:'#22c55e', padding:12, background:'#f0fdf4', borderRadius:8, marginBottom:12 }}>{success}</div>}
 

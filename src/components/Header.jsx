@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,7 +19,6 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Close menus on route change
   useEffect(() => {
     setOpenMenu(false);
     setMobileNav(false);
@@ -33,7 +32,6 @@ const Header = () => {
     return () => document.removeEventListener('click', close);
   }, []);
 
-  // Prevent scroll when mobile nav is open
   useEffect(() => {
     document.body.style.overflow = mobileNav ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -59,7 +57,7 @@ const Header = () => {
         <div className="container header-inner">
           <div className="header-left">
             <h1 className="site-title"><Link to="/">Kisallat webshop</Link></h1>
-            <form onSubmit={handleSearch} className="header-search desktop-only">
+            <form onSubmit={handleSearch} className="header-search desktop-only" style={{ flex: 1, maxWidth: 400 }}>
               <input className="search-input" aria-label="Kereses" placeholder="Kereses (tap, poraz...)" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
               <button type="submit" className="search-btn">Keres</button>
             </form>
@@ -127,10 +125,6 @@ const Header = () => {
 
           {/* Mobile: right side icons */}
           <div className="mobile-header-right mobile-only">
-            <Link to="/cart" className="mobile-icon-btn" style={{ position: 'relative' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-              {itemCount > 0 && <span className="badge badge-primary mobile-badge">{itemCount > 99 ? '99+' : itemCount}</span>}
-            </Link>
             <button onClick={toggleDarkMode} className="mobile-icon-btn" title={darkMode ? 'Vilagos mod' : 'Sotet mod'}>
               {darkMode ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -162,19 +156,9 @@ const Header = () => {
               <button onClick={() => navTo('/')} className="mobile-nav-item">Kezdolap</button>
               <button onClick={() => navTo('/about')} className="mobile-nav-item">Rolunk</button>
               <button onClick={() => navTo('/tips')} className="mobile-nav-item">Tippek</button>
-              <button onClick={() => navTo('/favorites')} className="mobile-nav-item">
-                Kedvencek {favoritesCount > 0 && <span className="badge badge-danger">{favoritesCount}</span>}
-              </button>
-              <button onClick={() => navTo('/cart')} className="mobile-nav-item">
-                Kosar {itemCount > 0 && <span className="badge badge-primary">{itemCount}</span>}
-              </button>
+              <button onClick={() => navTo('/gallery')} className="mobile-nav-item">Galeria</button>
+              <button onClick={() => navTo('/wall')} className="mobile-nav-item">Fal & Velemenyek</button>
             </div>
-
-            {!isAuthenticated && (
-              <div className="mobile-nav-section">
-                <button onClick={() => navTo('/auth')} className="mobile-nav-item mobile-nav-auth">Bejelentkezes / Regisztracio</button>
-              </div>
-            )}
 
             {isAuthenticated && (
               <>
@@ -185,7 +169,6 @@ const Header = () => {
                   </div>
                   <button onClick={() => navTo('/orders')} className="mobile-nav-item">Rendeleseim</button>
                   <button onClick={() => navTo('/coupons')} className="mobile-nav-item">Kuponjaim</button>
-                  <button onClick={() => navTo('/wall')} className="mobile-nav-item">Fal & Velemenyek</button>
                 </div>
 
                 {isAdmin && (
@@ -195,6 +178,7 @@ const Header = () => {
                     <button onClick={() => navTo('/admin/products')} className="mobile-nav-item">Termekek kezelese</button>
                     <button onClick={() => navTo('/admin/users')} className="mobile-nav-item">Felhasznalok</button>
                     <button onClick={() => navTo('/admin/coupons')} className="mobile-nav-item">Kuponok kezelese</button>
+                    <button onClick={() => navTo('/admin/orders')} className="mobile-nav-item">Rendelesek</button>
                   </div>
                 )}
 
@@ -206,6 +190,39 @@ const Header = () => {
           </nav>
         </div>
       )}
+
+      {/* Mobile bottom navigation bar */}
+      <nav className="mobile-bottom-bar mobile-only">
+        <Link to="/" className={`mobile-bottom-item ${location.pathname === '/' ? 'active' : ''}`}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Kezdolap</span>
+        </Link>
+        <Link to="/favorites" className={`mobile-bottom-item ${location.pathname === '/favorites' ? 'active' : ''}`}>
+          <div style={{ position: 'relative' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            {favoritesCount > 0 && <span className="mobile-bottom-badge">{favoritesCount}</span>}
+          </div>
+          <span>Kedvencek</span>
+        </Link>
+        <Link to="/cart" className={`mobile-bottom-item ${location.pathname === '/cart' ? 'active' : ''}`}>
+          <div style={{ position: 'relative' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            {itemCount > 0 && <span className="mobile-bottom-badge">{itemCount > 99 ? '99+' : itemCount}</span>}
+          </div>
+          <span>Kosar</span>
+        </Link>
+        {isAuthenticated ? (
+          <Link to="/orders" className={`mobile-bottom-item ${location.pathname === '/orders' ? 'active' : ''}`}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Rendelesek</span>
+          </Link>
+        ) : (
+          <Link to="/auth" className={`mobile-bottom-item ${location.pathname === '/auth' ? 'active' : ''}`}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Belepes</span>
+          </Link>
+        )}
+      </nav>
     </>
   );
 };

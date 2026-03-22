@@ -34,19 +34,21 @@ const ProductList = ({ title, category, subcategory }) => {
     fetchProducts();
   }, [category, subcategory]);
 
+  const getEffectivePrice = (p) => Number(p.akcios_ar) > 0 && Number(p.akcios_ar) < Number(p.ar) ? Number(p.akcios_ar) : Number(p.ar);
+
   const handleAddToCart = (product) => {
     const quantity = quantities[product.id] || 1;
-    addToCart({ id: product.id, name: product.nev, price: product.akcios_ar || product.ar, img: product.fo_kep }, quantity);
+    addToCart({ id: product.id, name: product.nev, price: getEffectivePrice(product), img: product.fo_kep }, quantity);
     setAddedItems(prev => ({ ...prev, [product.id]: true }));
     setTimeout(() => setAddedItems(prev => ({ ...prev, [product.id]: false })), 1000);
     setQuantities(prev => ({ ...prev, [product.id]: 1 }));
   };
 
   let filteredProducts = [...products];
-  if (minPrice) filteredProducts = filteredProducts.filter(p => (p.akcios_ar || p.ar) >= parseFloat(minPrice));
-  if (maxPrice) filteredProducts = filteredProducts.filter(p => (p.akcios_ar || p.ar) <= parseFloat(maxPrice));
-  if (sortBy === 'low') filteredProducts.sort((a, b) => (a.akcios_ar || a.ar) - (b.akcios_ar || b.ar));
-  else if (sortBy === 'high') filteredProducts.sort((a, b) => (b.akcios_ar || b.ar) - (a.akcios_ar || a.ar));
+  if (minPrice) filteredProducts = filteredProducts.filter(p => getEffectivePrice(p) >= parseFloat(minPrice));
+  if (maxPrice) filteredProducts = filteredProducts.filter(p => getEffectivePrice(p) <= parseFloat(maxPrice));
+  if (sortBy === 'low') filteredProducts.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+  else if (sortBy === 'high') filteredProducts.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
 
   if (loading) return <div className="container" style={{ textAlign:'center', padding:'60px 20px' }}><p>Termekek betoltese...</p></div>;
   if (error) return <div className="container" style={{ textAlign:'center', padding:'60px 20px' }}><p style={{ color:'#ef4444' }}>{error}</p></div>;
@@ -61,7 +63,7 @@ const ProductList = ({ title, category, subcategory }) => {
       ) : (
         <div className="content">
           {filteredProducts.map(product => {
-            const cartProduct = { id: product.id, name: product.nev, price: product.akcios_ar || product.ar, img: product.fo_kep };
+            const cartProduct = { id: product.id, name: product.nev, price: getEffectivePrice(product), img: product.fo_kep };
             const favorite = isFavorite(product.id);
             return (
               <div key={product.id} className="box" style={{ position:'relative' }}>
@@ -92,8 +94,8 @@ const ProductList = ({ title, category, subcategory }) => {
                 />
                 <h2>{product.nev}</h2>
                 <p>{product.rovid_leiras}</p>
-                {product.akcios_ar && <p style={{ textDecoration:'line-through', color:'var(--text-muted)', fontSize:'0.9rem' }}>{product.ar?.toLocaleString('hu-HU')} Ft</p>}
-                <p style={{ fontSize:'1.3rem', fontWeight:800, color:'var(--accent-primary)', margin:'8px 0' }}>{(product.akcios_ar || product.ar)?.toLocaleString('hu-HU')} Ft</p>
+                {Number(product.akcios_ar) > 0 && Number(product.akcios_ar) < Number(product.ar) && <p style={{ textDecoration:'line-through', color:'var(--text-muted)', fontSize:'0.9rem' }}>{Number(product.ar).toLocaleString('hu-HU')} Ft</p>}
+                <p style={{ fontSize:'1.3rem', fontWeight:800, color:'var(--accent-primary)', margin:'8px 0' }}>{(Number(product.akcios_ar) > 0 && Number(product.akcios_ar) < Number(product.ar) ? Number(product.akcios_ar) : Number(product.ar)).toLocaleString('hu-HU')} Ft</p>
                 {product.keszlet > 0 && (
                   <>
                     <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:12, padding:'0 20px' }}>

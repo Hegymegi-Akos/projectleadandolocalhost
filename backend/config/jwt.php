@@ -92,7 +92,12 @@ function getJWTFromHeader() {
             return $matches[1];
         }
     }
-    
+
+    // Query parameter fallback (for invoice downloads etc.)
+    if (isset($_GET['token']) && !empty($_GET['token'])) {
+        return $_GET['token'];
+    }
+
     return null;
 }
 
@@ -117,6 +122,11 @@ function getAdminSecretFromHeader() {
 
     if (isset($_SERVER['HTTP_X_ADMIN_SECRET'])) {
         return trim($_SERVER['HTTP_X_ADMIN_SECRET']);
+    }
+
+    // Query parameter fallback (for invoice downloads etc.)
+    if (isset($_GET['secret']) && !empty($_GET['secret'])) {
+        return trim($_GET['secret']);
     }
 
     return '';

@@ -24,6 +24,20 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
+      // Token alapveto ellenorzese lokálisan (lejarat, formatum)
+      try {
+        const parts = token.split('.');
+        if (parts.length !== 2) throw new Error('Hibas token formatum');
+        const payload = JSON.parse(atob(parts[0]));
+        if (!payload.exp || payload.exp < Math.floor(Date.now() / 1000)) {
+          throw new Error('Lejart token');
+        }
+      } catch {
+        authAPI.logout();
+        setUser(null);
+        return;
+      }
+
       if (!user) {
         try {
           const me = await authAPI.getCurrentUser();

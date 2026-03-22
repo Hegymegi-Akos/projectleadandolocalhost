@@ -608,7 +608,7 @@ button:active {
 #kezdolapu, .kezdolapu {
   width: auto;
   max-width: 1000px;
-  margin: 32px auto 20px;
+  margin: 16px auto 20px;
   padding: 20px 28px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
   backdrop-filter: blur(10px);
@@ -1072,53 +1072,67 @@ table tr:hover {
   .site-header {
     position: relative;
   }
-  
+
   .header-inner {
     flex-direction: column;
     gap: 16px;
     padding: 12px 0;
   }
-  
+
   .header-left {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .header-actions {
     width: 100%;
     justify-content: stretch;
   }
-  
-  .site-nav { 
-    width: 100%; 
+
+  .site-nav {
+    width: 100%;
   }
-  
-  .site-nav ul { 
+
+  .site-nav ul {
     justify-content: center;
     width: 100%;
   }
-  
-  .search-input { 
-    max-width: none; 
+
+  .search-input {
+    max-width: none;
   }
-  
-  .form-grid-2 { 
-    grid-template-columns: 1fr; 
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
   }
-  
-  .contact-grid { 
-    grid-template-columns: 1fr; 
+
+  .contact-grid {
+    grid-template-columns: 1fr;
   }
-  
+
   .content {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 20px 0;
   }
-  
+
+  /* Product cards smaller on mobile */
+  .box, .boxt, .boxp, .boxham, .boxh, .boxn, .boxtm, .boxe, .boxel {
+    min-height: auto;
+  }
+
+  .box img, .boxt img, .boxp img, .boxham img, .boxh img, .boxn img, .boxtm img, .boxe img, .boxel img {
+    height: 200px;
+  }
+
   .team-container {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  /* Filter bar mobile */
+  .filter-bar {
+    flex-direction: column;
   }
 }
 

@@ -16,8 +16,13 @@ const categoryConfig = {
   terrarium: { title: 'Terrariumok', category: 'hullo', subcategory: 'terrarium' },
   birdfood: { title: 'Madar Tapok', category: 'madar', subcategory: 'tap' },
   birdcage: { title: 'Madar Ketrecek', category: 'madar', subcategory: 'ketrec' },
+  rodentbedding: { title: 'Ragcsalo Almok', category: 'ragcsalo', subcategory: 'alom' },
+  rodenttoy: { title: 'Ragcsalo Jatekok', category: 'ragcsalo', subcategory: 'jatek' },
+  reptilelamp: { title: 'Melegito Lampak', category: 'hullo', subcategory: 'lampa' },
+  birdtoy: { title: 'Madar Jatekok', category: 'madar', subcategory: 'jatek' },
   fishfood: { title: 'Hal Tapok', category: 'hal', subcategory: 'tap' },
-  aquarium: { title: 'Akvariumok', category: 'hal', subcategory: 'akvarium' },
+  aquarium: { title: 'Akvariumok', category: 'hal', subcategory: 'akvariumok' },
+  fishfilter: { title: 'Szurok es tartozekok', category: 'hal', subcategory: 'szuro' },
 };
 
 const ProductCategory = ({ type }) => {

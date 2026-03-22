@@ -58,11 +58,11 @@ const Home = () => {
           </div>
           <div>
             <label>Min. ar (Ft)</label>
-            <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="0" style={{ width: 140 }} />
+            <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="0" />
           </div>
           <div>
             <label>Max. ar (Ft)</label>
-            <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="999999" style={{ width: 140 }} />
+            <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="999999" />
           </div>
           {(sortBy || minPrice || maxPrice) && (
             <button onClick={clearFilters} style={{
@@ -77,8 +77,8 @@ const Home = () => {
           {categories.map(cat => (
             <article key={cat.path} className="box" style={{ overflow: 'hidden' }}>
               <div onClick={() => applyFilters(cat.path)} style={{ cursor: 'pointer' }}>
-                <div style={{ background: cat.color, padding: '32px 20px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
-                  <img src={cat.img} alt={cat.name} loading="lazy" style={{ height: 130, width: 'auto', objectFit: 'contain' }} />
+                <div className="category-card-img-wrap" style={{ background: cat.color }}>
+                  <img src={cat.img} alt={cat.name} loading="lazy" className="category-card-img" />
                 </div>
                 <h2>{cat.name}</h2>
                 <p>{cat.desc}</p>

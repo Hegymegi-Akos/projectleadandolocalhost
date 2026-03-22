@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# HTTPS átirányítás
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Ha a backend API-t hívják, ne nyúlj hozzá
+RewriteRule ^backend/ - [L]
+
+# Ha a uploads mappát hívják, ne nyúlj hozzá
+RewriteRule ^uploads/ - [L]
+
+# Ha létező fájl vagy mappa, szolgáld ki
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Minden mást irányíts az index.html-re (React SPA routing)
+RewriteRule ^ index.html [QSA,L]

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { adminOrdersAPI, isAllowedAdminUser } from '../api/apiService';
@@ -84,6 +84,7 @@ const AdminOrders = () => {
                           <option key={k} value={k}>{v}</option>
                         ))}
                       </select>
+                      <button onClick={() => { const url = adminOrdersAPI.getInvoiceUrl(o.id); const token = localStorage.getItem('token'); window.open(`${url}?token=${encodeURIComponent(token)}&secret=Admin123`, '_blank'); }} className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>Szamla</button>
                       <button onClick={() => handleDelete(o.id)} className="btn-danger" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>Torles</button>
                     </div>
                   </td>

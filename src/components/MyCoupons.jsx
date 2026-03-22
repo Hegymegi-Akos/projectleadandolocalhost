@@ -27,7 +27,7 @@ const MyCoupons = () => {
       {loading ? <p>Betoltes...</p> : coupons.length === 0 ? (
         <section className="ui-card"><p>Nincs elerheto kuponod.</p></section>
       ) : (
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:16 }}>
+        <div className="responsive-card-grid">
           {coupons.map(coupon => (
             <section key={coupon.id} className="ui-card">
               <h3 style={{ margin:'0 0 8px', color:'var(--accent-primary)' }}>{coupon.kod}</h3>

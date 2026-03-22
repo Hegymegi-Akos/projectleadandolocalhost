@@ -17,10 +17,10 @@ export default function Gallery() {
     <div className="container page">
       <h1 className="page-title">Galeria</h1>
       {images.length === 0 ? <p>Nincs kep.</p> : (
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:16 }}>
+        <div className="gallery-grid">
           {images.map((src, i) => (
-            <div key={i} style={{ borderRadius:12, overflow:'hidden', boxShadow:'0 4px 12px rgba(0,0,0,0.1)' }}>
-              <img src={src} alt={`kep-${i}`} loading="lazy" style={{ width:'100%', height:200, objectFit:'cover' }} />
+            <div key={i} className="gallery-item">
+              <img src={src} alt={`kep-${i}`} loading="lazy" className="gallery-img" />
             </div>
           ))}
         </div>

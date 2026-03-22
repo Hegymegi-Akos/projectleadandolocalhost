@@ -70,6 +70,12 @@ function Wall() {
     catch (err) { setWallError(err.message); }
   };
 
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Biztosan torlod ezt a velemenyt?')) return;
+    try { await reviewsAPI.deleteReview(reviewId); setReviews(prev => prev.filter(r => r.id !== reviewId)); }
+    catch (err) { setReviewsError(err.message); }
+  };
+
   const handleReviewSubmit = async (e) => {
     e.preventDefault(); setSubmitError(''); setSubmitSuccess('');
     if (!reviewForm.termek_id || !reviewForm.cim.trim() || !reviewForm.velemeny.trim()) { setSubmitError('Minden mezo kitoltese kotelezo!'); return; }
@@ -106,7 +112,7 @@ function Wall() {
               {wallPosts.map(post => (
                 <div key={post.id} style={{ padding:16, borderRadius:12, background:'rgba(59,130,246,0.03)', border:'1px solid rgba(59,130,246,0.1)' }}>
                   <div style={{ display:'flex', justifyContent:'space-between' }}>
-                    <div><strong>{post.felhasznalonev || 'Felhasznalo'}</strong> <span style={{ color:'#666', fontSize:12 }}>{new Date(post.letrehozva).toLocaleString('hu-HU')}</span></div>
+                    <div><strong>{post.felhasznalonev || 'Felhasznalo'}</strong> <span style={{ color:'#666', fontSize:'0.8rem' }}>{new Date(post.letrehozva).toLocaleString('hu-HU')}</span></div>
                     {(user?.id === post.felhasznalo_id || user?.admin) && <button onClick={() => handleDeletePost(post.id)} style={{ background:'none', border:'none', cursor:'pointer' }}>Torles</button>}
                   </div>
                   <p style={{ marginTop:8, whiteSpace:'pre-wrap' }}>{post.szoveg}</p>
@@ -128,7 +134,10 @@ function Wall() {
                   <strong>{review.cim}</strong>
                   <div style={{ color:'#f59e0b' }}>{'*'.repeat(review.ertekeles)}</div>
                   <p style={{ marginTop:8 }}>{review.velemeny}</p>
-                  <div style={{ fontSize:12, color:'#666' }}>{review.felhasznalonev || review.vendeg_nev || 'Nevtelen'} - {new Date(review.datum).toLocaleDateString('hu-HU')}</div>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <span style={{ fontSize:'0.8rem', color:'#666' }}>{review.felhasznalonev || review.vendeg_nev || 'Nevtelen'} - {new Date(review.datum).toLocaleDateString('hu-HU')}</span>
+                    {isAdmin && <button onClick={() => handleDeleteReview(review.id)} style={{ background:'none', border:'none', cursor:'pointer', color:'#ef4444', fontSize:'0.85rem' }}>Torles</button>}
+                  </div>
                 </div>
               ))}
             </div>

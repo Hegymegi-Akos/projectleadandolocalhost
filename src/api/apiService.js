@@ -216,7 +216,7 @@ export const reviewsAPI = {
   },
   async deleteWallPost(postId) {
     const response = await fetch(`${PHP_API_URL}/reviews.php/wall/${postId}`, {
-      method: 'DELETE', headers: getHeaders()
+      method: 'DELETE', headers: withAdminHeaders(getHeaders())
     });
     if (!response.ok) { const data = await response.json(); throw new Error(data.message || 'Hiba'); }
     return await response.json();
@@ -321,6 +321,39 @@ export const adminUsersAPI = {
         tiltas_oka
       })
     });
+  },
+  async toggleAdmin(id, admin) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/users.php/${id}/admin`, {
+      method: 'PUT',
+      headers: withAdminHeaders(getHeaders()),
+      body: JSON.stringify({ admin: admin ? 1 : 0 })
+    });
+  },
+  async deleteUser(id) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/users.php/${id}`, {
+      method: 'DELETE',
+      headers: withAdminHeaders(getHeaders())
+    });
+  },
+  async searchUsers(query) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/users.php/search?q=${encodeURIComponent(query)}`, {
+      headers: withAdminHeaders(getHeaders())
+    });
+  },
+  async getStats() {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/users.php/stats`, {
+      headers: withAdminHeaders(getHeaders())
+    });
+  },
+  async getUserOrders(userId) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/users.php/${userId}/orders`, {
+      headers: withAdminHeaders(getHeaders())
+    });
   }
 };
 
@@ -365,6 +398,40 @@ export const uploadAPI = {
       throw new Error(data.message || 'Kép feltöltése sikertelen');
     }
     return data;
+  }
+};
+
+// ==================== ADMIN - KATEGÓRIÁK ====================
+export const adminCategoriesAPI = {
+  async getAll() {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/categories.php`, { headers: withAdminHeaders(getHeaders()) });
+  },
+  async createCategory(data) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/categories.php`, {
+      method: 'POST', headers: withAdminHeaders(getHeaders()),
+      body: JSON.stringify(data)
+    });
+  },
+  async createSubcategory(data) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/categories.php/subcategory`, {
+      method: 'POST', headers: withAdminHeaders(getHeaders()),
+      body: JSON.stringify(data)
+    });
+  },
+  async deleteCategory(id) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/categories.php/${id}`, {
+      method: 'DELETE', headers: withAdminHeaders(getHeaders())
+    });
+  },
+  async deleteSubcategory(id) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/categories.php/subcategory/${id}`, {
+      method: 'DELETE', headers: withAdminHeaders(getHeaders())
+    });
   }
 };
 

@@ -13,7 +13,7 @@ const Tips = () => (
   <div className="container page">
     <h1 className="page-title">Allatgondozasi Tippek</h1>
     <p style={{ marginBottom:24, color:'var(--text-secondary)' }}>Itt talalsz hasznos tanacsokat kedvenceid gondozasahoz.</p>
-    <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:16 }}>
+    <div className="responsive-card-grid">
       {tips.map((tip, i) => (
         <section key={i} className="ui-card">
           <h3>{tip.category}: {tip.title}</h3>
