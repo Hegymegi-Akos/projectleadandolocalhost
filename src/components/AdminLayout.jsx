@@ -13,9 +13,9 @@ const AdminLayout = ({ children }) => {
   if (!isAuthenticated) {
     return (
       <main className="container page" style={{ textAlign: 'center', padding: '80px 24px' }}>
-        <h1 className="page-title">Bejelentkezes szukseges</h1>
+        <h1 className="page-title">Bejelentkezés szükséges</h1>
         <p style={{ color: 'var(--color-text-secondary)', marginBottom: 24 }}>Jelentkezz be az admin panel elerese erdekeben.</p>
-        <Link to="/auth" className="btn-primary" style={{ display: 'inline-block', padding: '12px 32px', textDecoration: 'none' }}>Bejelentkezes</Link>
+        <Link to="/auth" className="btn-primary" style={{ display: 'inline-block', padding: '12px 32px', textDecoration: 'none' }}>Bejelentkezés</Link>
       </main>
     );
   }
@@ -25,7 +25,7 @@ const AdminLayout = ({ children }) => {
       <main className="container page" style={{ textAlign: 'center', padding: '80px 24px' }}>
         <h1 className="page-title">Hozzaferes megtagadva</h1>
         <p style={{ color: 'var(--color-text-secondary)', marginBottom: 24 }}>Nincs admin jogosultsagod ehhez az oldalhoz.</p>
-        <Link to="/" className="btn-primary" style={{ display: 'inline-block', padding: '12px 32px', textDecoration: 'none' }}>Kezdolap</Link>
+        <Link to="/" className="btn-primary" style={{ display: 'inline-block', padding: '12px 32px', textDecoration: 'none' }}>Kezdőlap</Link>
       </main>
     );
   }
@@ -33,8 +33,8 @@ const AdminLayout = ({ children }) => {
   const navItems = [
     { path: '/admin', label: 'Attekintes', icon: '📊' },
     { path: '/admin/products', label: 'Termekek', icon: '📦' },
-    { path: '/admin/users', label: 'Felhasznalok', icon: '👥' },
-    { path: '/admin/orders', label: 'Rendelesek', icon: '🛒' },
+    { path: '/admin/users', label: 'Felhasználók', icon: '👥' },
+    { path: '/admin/orders', label: 'Rendelések', icon: '🛒' },
     { path: '/admin/coupons', label: 'Kuponok', icon: '🎫' },
     { path: '/admin/categories', label: 'Kategoriak', icon: '📂' },
   ];
@@ -42,8 +42,8 @@ const AdminLayout = ({ children }) => {
   const pageTitleMap = {
     '/admin': 'Admin attekintes',
     '/admin/products': 'Termek kezeles',
-    '/admin/users': 'Felhasznalo kezeles',
-    '/admin/orders': 'Rendeles kezeles',
+    '/admin/users': 'Felhasználó kezelés',
+    '/admin/orders': 'Rendelés kezelés',
     '/admin/coupons': 'Kupon kezeles',
     '/admin/categories': 'Kategoria kezeles',
   };
@@ -88,7 +88,7 @@ const AdminLayout = ({ children }) => {
           </Link>
           <button onClick={() => { logout(); navigate('/'); }} className="admin-sidebar-link admin-sidebar-logout">
             <span className="admin-sidebar-link-icon">🚪</span>
-            <span>Kijelentkezes</span>
+            <span>Kijelentkezés</span>
           </button>
         </div>
       </aside>
@@ -110,7 +110,7 @@ const AdminLayout = ({ children }) => {
           </div>
           <div className="admin-topbar-actions">
             <Link to="/" className="admin-topbar-link">Bolt nezete</Link>
-            <button onClick={() => { logout(); navigate('/'); }} className="admin-topbar-logout">Kijelentkezes</button>
+            <button onClick={() => { logout(); navigate('/'); }} className="admin-topbar-logout">Kijelentkezés</button>
           </div>
         </header>
 

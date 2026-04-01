@@ -20,8 +20,11 @@ import Search from './components/Search';
 import Gallery from './components/Gallery';
 import Wall from './components/Wall';
 import Tips from './components/Tips';
+import Contact from './components/Contact';
+import Messages from './components/Messages';
 
 import ProductCategory from './components/ProductCategory';
+import ProductDetail from './components/ProductDetail';
 import DynamicSubcategory from './components/DynamicSubcategory';
 
 import Header from './components/Header';
@@ -102,6 +105,7 @@ const AppContent = () => {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/about" element={<About />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/tips" element={<Tips />} />
         {/* Hardcoded subcategory routes */}
         <Route path="/dogfood" element={<ProductCategory type="dogfood" />} />
@@ -131,6 +135,8 @@ const AppContent = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path="/coupons" element={<MyCoupons />} />
         <Route path="/wall" element={<Wall />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/messages" element={<Messages />} />
       </Routes>
       <Footer />
     </div>

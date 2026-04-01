@@ -24,7 +24,7 @@ const Cart = () => {
     setCouponMsg('');
     try {
       const data = await couponsAPI.apply(couponCode, total);
-      if (data.success) { setCouponDiscount(data.kedvezmeny); setCouponMsg(`Kupon alkalmazva! Kedvezmeny: ${Math.round(data.kedvezmeny)} Ft`); }
+      if (data.success) { setCouponDiscount(data.kedvezmeny); setCouponMsg(`Kupon alkalmazva! Kedvezmény: ${Math.round(data.kedvezmeny)} Ft`); }
       else { setCouponMsg(data.message || 'Ervenytelen kupon'); }
     } catch { setCouponMsg('Hiba a kupon alkalmazasakor'); }
   };
@@ -32,7 +32,7 @@ const Cart = () => {
   const handleOrder = async (e) => {
     e.preventDefault();
     setOrderError(''); setOrderSuccess(''); setOrdering(true);
-    if (!isAuthenticated) { setOrderError('Bejelentkezes szukseges a rendeleshez'); setOrdering(false); return; }
+    if (!isAuthenticated) { setOrderError('Bejelentkezés szükséges a rendeléshez'); setOrdering(false); return; }
     try {
       const orderData = {
         ...orderForm, osszeg: finalTotal,
@@ -40,7 +40,7 @@ const Cart = () => {
       };
       const data = await ordersAPI.create(orderData);
       if (data.rendeles_id || data.message?.includes('siker')) {
-        setOrderSuccess(`Rendeles sikeresen leadva! Rendeleszam: ${data.rendeles_szam || ''}`);
+        setOrderSuccess(`Rendelés sikeresen leadva! Rendelésszám: ${data.rendeles_szam || ''}`);
         clearCart(); setCouponDiscount(0);
         setShowSuccess(true);
       } else { setOrderError(data.message || 'Hiba tortent'); }
@@ -87,7 +87,7 @@ const Cart = () => {
 
   if (cartItems.length === 0) return (
     <main className="container page">
-      <h1 className="page-title">Kosar</h1>
+      <h1 className="page-title">Kosár</h1>
       <section className="ui-card" style={{ textAlign: 'center', padding: 48 }}>
         <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>A kosarad ures.</p>
       </section>
@@ -96,7 +96,7 @@ const Cart = () => {
 
   return (
     <main className="container page">
-      <h1 className="page-title">Kosar</h1>
+      <h1 className="page-title">Kosár</h1>
       {orderError && <div style={{ color: '#ef4444', padding: '16px 20px', background: 'rgba(239,68,68,0.1)', borderRadius: 12, marginBottom: 20, fontWeight: 600, textAlign: 'center' }}>{orderError}</div>}
 
       <section className="ui-card" style={{ marginBottom: 24 }}>
@@ -109,16 +109,19 @@ const Cart = () => {
             </div>
             <div className="cart-line-actions">
               <input type="number" value={item.quantity} min={1} onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)} className="cart-qty-input" />
-              <button onClick={() => removeFromCart(item.id)} className="btn-danger cart-remove-btn">Torles</button>
+              <button onClick={() => removeFromCart(item.id)} className="btn-danger cart-remove-btn">Törlés</button>
             </div>
           </div>
         ))}
 
-        <div style={{ marginTop: 20, display: 'flex', gap: 8, alignItems: 'center' }}>
-          <input value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Kupon kod" style={{ flex: 1 }} />
-          <button onClick={handleApplyCoupon} className="btn-secondary">Alkalmazas</button>
+        <div style={{ marginTop: 20, padding: 16, background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06))', borderRadius: 12, border: '1px dashed rgba(99,102,241,0.3)' }}>
+          <p style={{ margin: '0 0 8px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-primary)' }}>🎟️ Van kupon kodod?</p>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Ird be a kupon kododat..." style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '2px solid rgba(99,102,241,0.2)', fontSize: '0.95rem', fontWeight: 600 }} />
+            <button onClick={handleApplyCoupon} style={{ padding: '10px 20px', borderRadius: 10, border: 'none', background: 'var(--accent-primary, #6366f1)', color: '#fff', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>Bevaltas</button>
+          </div>
+          {couponMsg && <p style={{ marginTop: 8, fontSize: '0.85rem', fontWeight: 600, color: couponDiscount > 0 ? '#059669' : '#ef4444' }}>{couponMsg}</p>}
         </div>
-        {couponMsg && <p style={{ marginTop: 8, fontSize: '0.9rem', fontWeight: 600, color: couponDiscount > 0 ? '#059669' : '#ef4444' }}>{couponMsg}</p>}
 
         <div style={{ marginTop: 20, textAlign: 'right', padding: '16px 0 0', borderTop: '2px solid rgba(15,23,42,0.06)' }}>
           {couponDiscount > 0 && <p style={{ color: '#059669', fontWeight: 600 }}>Kedvezmeny: -{Math.round(couponDiscount).toLocaleString('hu-HU')} Ft</p>}
@@ -127,7 +130,7 @@ const Cart = () => {
       </section>
 
       <section className="ui-card">
-        <h3 style={{ margin: '0 0 20px', fontSize: '1.2rem' }}>Szallitasi adatok</h3>
+        <h3 style={{ margin: '0 0 20px', fontSize: '1.2rem' }}>Szállítási adatok</h3>
         <form onSubmit={handleOrder} className="form-grid">
           <div className="responsive-grid-2-1">
             <div className="form-field"><label>Nev</label><input value={orderForm.szallitasi_nev} onChange={(e) => setOrderForm(prev => ({ ...prev, szallitasi_nev: e.target.value }))} required placeholder="Teljes nev" /></div>
@@ -139,13 +142,13 @@ const Cart = () => {
           </div>
           <div className="responsive-grid-2">
             <div className="form-field">
-              <label>Szallitasi mod</label>
+              <label>Szállítási mód</label>
               <select value={orderForm.szallitasi_mod} onChange={(e) => setOrderForm(prev => ({ ...prev, szallitasi_mod: e.target.value }))}>
                 <option>GLS futar</option><option>Foxpost</option><option>Szemelyes atvetel</option>
               </select>
             </div>
             <div className="form-field">
-              <label>Fizetesi mod</label>
+              <label>Fizetési mód</label>
               <select value={orderForm.fizetesi_mod} onChange={(e) => setOrderForm(prev => ({ ...prev, fizetesi_mod: e.target.value }))}>
                 <option>Bankkartya</option><option>Utanvet</option><option>Atutalas</option>
               </select>
@@ -153,7 +156,7 @@ const Cart = () => {
           </div>
           <div className="form-field"><label>Megjegyzes (opcionalis)</label><textarea value={orderForm.megjegyzes} onChange={(e) => setOrderForm(prev => ({ ...prev, megjegyzes: e.target.value }))} rows={3} placeholder="Pl. csengessen ketszer..." /></div>
           <button type="submit" className="btn-primary" disabled={ordering} style={{ width: '100%', padding: 16, fontSize: '1.05rem', borderRadius: 14 }}>
-            {ordering ? 'Feldolgozas...' : `Rendeles leadasa - ${finalTotal.toLocaleString('hu-HU')} Ft`}
+            {ordering ? 'Feldolgozás...' : `Rendelés leadása - ${finalTotal.toLocaleString('hu-HU')} Ft`}
           </button>
         </form>
       </section>

@@ -1,17 +1,17 @@
 import React from 'react';
 
 const team = [
-  { id: 'martin', name: 'Kamecz Martin', role: 'Fejleszto', image: '/images/Martin.jpg', bio: 'Frontend fejleszto, a felhasznaloi elmeny es a teljesitmeny rajongoja.' },
-  { id: 'akos', name: 'Hegymegi-Kiss Akos', role: 'Designer', image: '/images/Akos.jpg', bio: 'UI/UX tervezo, aki a reszponziv es ertheto feluleteket szereti letrehozni.' },
-  { id: 'dominika', name: 'Peterffy Dominika', role: 'Projektvezeto', image: '/images/Dominika.jpg', bio: 'Projektvezeto, fokuszban a hataridok es a csapat osszhangja.' }
+  { id: 'martin', name: 'Kamecz Martin', role: 'Fejlesztő', image: '/images/Martin.jpg', bio: 'Frontend fejlesztő, a felhasználói élmény és a teljesítmény rajongója.' },
+  { id: 'akos', name: 'Hegymegi-Kiss Ákos', role: 'Designer', image: '/images/Akos.jpg', bio: 'UI/UX tervező, aki a reszponzív és érthető felületeket szereti létrehozni.' },
+  { id: 'dominika', name: 'Péterffy Dominika', role: 'Projektvezető', image: '/images/Dominika.jpg', bio: 'Projektvezető, fókuszban a határidők és a csapat összhangja.' }
 ];
 
 const About = () => (
   <main className="container page">
-    <h1 className="page-title">Rolunk</h1>
+    <h1 className="page-title">Rólunk</h1>
     <section className="ui-card" style={{ marginBottom: 16 }}>
-      <p className="kezdolapp">A 2024-ben alapitott webshop azon elhivatottsaggal jott letre, hogy allatbaratoknak megbizhato es praktikus online vasarlasi lehetoseget kinaljon.</p>
-      <p className="kezdolapp">Celunk, hogy ugyfeleinknek a legjobb minoseget kinaljuk a legjobb aron. Valasszon tobb mint 13000 termekunkbol kedvence szamara!</p>
+      <p className="kezdolapp">A 2024-ben alapított webshop azon elhivatottsággal jött létre, hogy állatbarátoknak megbízható és praktikus online vásárlási lehetőséget kínáljon.</p>
+      <p className="kezdolapp">Célunk, hogy ügyfeleinknek a legjobb minőséget kínáljuk a legjobb áron. Válasszon több mint 13000 termékünkből kedvence számára!</p>
     </section>
     <section className="ui-card">
       <h2 className="section-title">Csapatunk</h2>

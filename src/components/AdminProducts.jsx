@@ -236,7 +236,7 @@ const AdminProducts = () => {
       <section className="ui-card" style={{ marginBottom: 16 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 220px', gap: 12 }}>
           <div className="form-field">
-            <label>Kereses</label>
+            <label>Keresés</label>
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -297,7 +297,7 @@ const AdminProducts = () => {
                       <button onClick={() => toggleActive(p)} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} disabled={togglingProductId === p.id}>
                         {togglingProductId === p.id ? 'Varj...' : Number(p.aktiv) === 1 ? 'Inaktival' : 'Aktival'}
                       </button>
-                      <button onClick={() => handleDelete(p.id)} className="btn-danger" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Torles</button>
+                      <button onClick={() => handleDelete(p.id)} className="btn-danger" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Törlés</button>
                     </div>
                   </td>
                 </tr>

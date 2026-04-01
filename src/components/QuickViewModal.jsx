@@ -16,7 +16,7 @@ const QuickViewModal = ({ product, show, onClose }) => {
         {product.img && <img src={product.img} alt={product.name} style={{ width: '100%', borderRadius: 16, marginBottom: 20, maxHeight: 300, objectFit: 'cover' }} />}
         {product.desc && <p style={{ color: 'var(--color-text-secondary)', marginBottom: 16 }}>{product.desc}</p>}
         <p style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--primary)', marginBottom: 16 }}>{product.price?.toLocaleString('hu-HU')} Ft</p>
-        <button onClick={() => { addToCart(product); onClose(); }} className="btn-primary" style={{ width: '100%', padding: 14, fontSize: '1rem', borderRadius: 12 }}>Kosarba</button>
+        <button onClick={() => { addToCart(product); onClose(); }} className="btn-primary" style={{ width: '100%', padding: 14, fontSize: '1rem', borderRadius: 12 }}>Kosárba</button>
       </div>
     </div>
   );

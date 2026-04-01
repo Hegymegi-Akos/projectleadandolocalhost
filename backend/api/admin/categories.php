@@ -29,6 +29,8 @@ if ($method === 'GET') {
     createSubcategory($db, $data);
 } elseif ($method === 'POST') {
     createCategory($db, $data);
+} elseif ($method === 'PUT' && preg_match('/\/subcategory\/(\d+)/', $request_uri, $m)) {
+    updateSubcategory($db, (int)$m[1], $data);
 } elseif ($method === 'DELETE' && preg_match('/\/subcategory\/(\d+)/', $request_uri, $m)) {
     deleteSubcategory($db, (int)$m[1]);
 } elseif ($method === 'DELETE' && preg_match('/\/categories\.php\/(\d+)/', $request_uri, $m)) {
@@ -95,6 +97,22 @@ function createSubcategory($db, $data) {
         ':sorrend' => $nextOrder
     ]);
     echo json_encode(['message' => 'Alkategoria letrehozva', 'id' => $db->lastInsertId()]);
+}
+
+function updateSubcategory($db, $id, $data) {
+    $fields = [];
+    $params = [':id' => $id];
+    if (isset($data->nev)) { $fields[] = 'nev = :nev'; $params[':nev'] = $data->nev; }
+    if (isset($data->kep)) { $fields[] = 'kep = :kep'; $params[':kep'] = $data->kep; }
+    if (isset($data->slug)) { $fields[] = 'slug = :slug'; $params[':slug'] = $data->slug; }
+    if (empty($fields)) {
+        http_response_code(400);
+        echo json_encode(['message' => 'Nincs modositando mezo']);
+        return;
+    }
+    $stmt = $db->prepare("UPDATE alkategoriak SET " . implode(', ', $fields) . " WHERE id = :id");
+    $stmt->execute($params);
+    echo json_encode(['message' => 'Alkategoria frissitve']);
 }
 
 function deleteSubcategory($db, $id) {

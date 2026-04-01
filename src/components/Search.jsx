@@ -25,7 +25,7 @@ const Search = () => {
 
   return (
     <div className="container page">
-      <h1 className="page-title">Kereses: "{query}"</h1>
+      <h1 className="page-title">Keresés: "{query}"</h1>
       {loading ? <p>Betoltes...</p> : results.length === 0 ? <p>Nincs talalt.</p> : (
         <div className="content">
           {results.map(product => (
@@ -34,7 +34,7 @@ const Search = () => {
               <h2>{product.nev}</h2>
               <p>{product.rovid_leiras}</p>
               <p style={{ fontSize:'1.2rem', fontWeight:800, color:'var(--accent-primary)' }}>{(product.akcios_ar || product.ar)?.toLocaleString('hu-HU')} Ft</p>
-              <button onClick={() => addToCart({ id: product.id, name: product.nev, price: product.akcios_ar || product.ar, img: product.fo_kep })}>Kosarba</button>
+              <button onClick={() => addToCart({ id: product.id, name: product.nev, price: product.akcios_ar || product.ar, img: product.fo_kep })}>Kosárba</button>
             </div>
           ))}
         </div>

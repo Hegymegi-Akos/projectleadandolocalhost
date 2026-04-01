@@ -86,7 +86,7 @@ const AdminCoupons = () => {
           <div className="form-field"><label>Ervenyes veg</label><input type="datetime-local" value={form.ervenyes_veg} onChange={(e) => setForm(p => ({ ...p, ervenyes_veg: e.target.value }))} /></div>
 
           <div className="form-field" style={{ gridColumn: '1 / -1' }}>
-            <label>Felhasznalo hozzarendelese (opcionalis)</label>
+            <label>Felhasználó hozzárendelése (opcionális)</label>
             {selectedUser ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: '#dbeafe', borderRadius: 8 }}>
                 <span style={{ fontWeight: 600 }}>{selectedUser.felhasznalonev}</span>
@@ -101,7 +101,7 @@ const AdminCoupons = () => {
                   onChange={(e) => handleUserSearch(e.target.value)}
                   placeholder="Keress email, felhasznalonev vagy ID alapjan..."
                 />
-                {searching && <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, padding: 8, background: '#fff', border: '1px solid #d1d5db', borderRadius: '0 0 8px 8px', color: '#64748b', fontSize: '0.85rem' }}>Kereses...</div>}
+                {searching && <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, padding: 8, background: '#fff', border: '1px solid #d1d5db', borderRadius: '0 0 8px 8px', color: '#64748b', fontSize: '0.85rem' }}>Keresés...</div>}
                 {userResults.length > 0 && (
                   <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#fff', border: '1px solid #d1d5db', borderRadius: '0 0 8px 8px', maxHeight: 200, overflowY: 'auto', zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                     {userResults.map(u => (
@@ -138,7 +138,7 @@ const AdminCoupons = () => {
                 <th>Kod</th>
                 <th>Tipus</th>
                 <th>Ertek</th>
-                <th>Felhasznalo</th>
+                <th>Felhasználó</th>
                 <th style={{ textAlign: 'center' }}>Aktiv</th>
                 <th style={{ textAlign: 'center' }}>Muveletek</th>
               </tr>
@@ -164,7 +164,7 @@ const AdminCoupons = () => {
                     </span>
                   </td>
                   <td style={{ textAlign: 'center' }}>
-                    <button onClick={() => handleDelete(c.id)} className="btn-danger" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Torles</button>
+                    <button onClick={() => handleDelete(c.id)} className="btn-danger" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Törlés</button>
                   </td>
                 </tr>
               ))}

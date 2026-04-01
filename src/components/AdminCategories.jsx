@@ -15,6 +15,8 @@ const AdminCategories = () => {
   const [newSubCatId, setNewSubCatId] = useState('');
 
   const [expandedCat, setExpandedCat] = useState(null);
+  const [editingSubId, setEditingSubId] = useState(null);
+  const [editSubKep, setEditSubKep] = useState('');
 
   const loadCategories = async () => {
     try {
@@ -62,6 +64,15 @@ const AdminCategories = () => {
     try {
       await adminCategoriesAPI.deleteCategory(id);
       showMsg('Kategoria torolve!');
+      loadCategories();
+    } catch (err) { showMsg(err.message, true); }
+  };
+
+  const handleUpdateSubcategoryKep = async (id) => {
+    try {
+      await adminCategoriesAPI.updateSubcategory(id, { kep: editSubKep.trim() || null });
+      setEditingSubId(null); setEditSubKep('');
+      showMsg('Alkategoria kep frissitve!');
       loadCategories();
     } catch (err) { showMsg(err.message, true); }
   };
@@ -152,9 +163,9 @@ const AdminCategories = () => {
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id, cat.nev); }}
                     style={btnDanger}
-                    title={cat.alkategoriak?.length > 0 ? 'Elobb torold az alkategoriakat' : 'Torles'}
+                    title={cat.alkategoriak?.length > 0 ? 'Előbb töröld az alkategóriákat' : 'Törlés'}
                   >
-                    Torles
+                    Törlés
                   </button>
                 </div>
 
@@ -166,6 +177,7 @@ const AdminCategories = () => {
                       <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 8 }}>
                         <thead>
                           <tr style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', textAlign: 'left' }}>
+                            <th style={{ padding: '8px 4px' }}>Kep</th>
                             <th style={{ padding: '8px 4px' }}>Nev</th>
                             <th style={{ padding: '8px 4px' }}>Slug</th>
                             <th style={{ padding: '8px 4px', textAlign: 'center' }}>Termekek</th>
@@ -175,17 +187,43 @@ const AdminCategories = () => {
                         <tbody>
                           {cat.alkategoriak.map(sub => (
                             <tr key={sub.id} style={{ borderTop: '1px solid var(--color-border, #f0f0f0)' }}>
+                              <td style={{ padding: '8px 4px', width: 60 }}>
+                                {sub.kep ? (
+                                  <img src={sub.kep} alt={sub.nev} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6 }} />
+                                ) : (
+                                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Nincs</span>
+                                )}
+                              </td>
                               <td style={{ padding: '8px 4px', fontSize: '0.9rem' }}>{sub.nev}</td>
                               <td style={{ padding: '8px 4px', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>{sub.slug}</td>
                               <td style={{ padding: '8px 4px', textAlign: 'center', fontSize: '0.85rem' }}>{sub.termek_count || 0}</td>
                               <td style={{ padding: '8px 4px', textAlign: 'right' }}>
-                                <button
-                                  onClick={() => handleDeleteSubcategory(sub.id, sub.nev)}
-                                  style={btnDanger}
-                                  title={Number(sub.termek_count) > 0 ? 'Elobb torold a termekeket' : 'Torles'}
-                                >
-                                  Torles
-                                </button>
+                                <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap' }}>
+                                  {editingSubId === sub.id ? (
+                                    <>
+                                      <input
+                                        value={editSubKep}
+                                        onChange={e => setEditSubKep(e.target.value)}
+                                        placeholder="Kep URL"
+                                        style={{ ...inputStyle, width: 160, fontSize: '0.8rem', padding: '4px 8px' }}
+                                      />
+                                      <button onClick={() => handleUpdateSubcategoryKep(sub.id)} style={{ ...btnStyle, background: '#10b981', color: '#fff', padding: '4px 10px', fontSize: '0.8rem' }}>Mentes</button>
+                                      <button onClick={() => { setEditingSubId(null); setEditSubKep(''); }} style={{ ...btnStyle, background: '#6b7280', color: '#fff', padding: '4px 10px', fontSize: '0.8rem' }}>Megse</button>
+                                    </>
+                                  ) : (
+                                    <button
+                                      onClick={() => { setEditingSubId(sub.id); setEditSubKep(sub.kep || ''); }}
+                                      style={{ ...btnStyle, background: '#f59e0b', color: '#fff', padding: '4px 12px', fontSize: '0.8rem' }}
+                                    >Kep</button>
+                                  )}
+                                  <button
+                                    onClick={() => handleDeleteSubcategory(sub.id, sub.nev)}
+                                    style={btnDanger}
+                                    title={Number(sub.termek_count) > 0 ? 'Előbb töröld a termékeket' : 'Törlés'}
+                                  >
+                                    Törlés
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))}

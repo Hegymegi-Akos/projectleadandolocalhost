@@ -44,7 +44,7 @@ const Auth = () => {
 
   return (
     <main className="container page" style={{ maxWidth: 520, margin: '0 auto' }}>
-      <h1 className="page-title">{isLogin ? 'Bejelentkezes' : 'Regisztracio'}</h1>
+      <h1 className="page-title">{isLogin ? 'Bejelentkezés' : 'Regisztráció'}</h1>
 
       <section className="ui-card">
         <div style={{ display: 'flex', gap: 0, marginBottom: 28, background: 'var(--color-bg-alt)', borderRadius: 12, padding: 4 }}>
@@ -57,7 +57,7 @@ const Auth = () => {
               color: isLogin ? '#fff' : 'var(--color-text-secondary)',
               boxShadow: isLogin ? '0 4px 12px rgba(249,115,22,0.2)' : 'none'
             }}
-          >Bejelentkezes</button>
+          >Bejelentkezés</button>
           <button
             onClick={() => { setIsLogin(false); setError(null); }}
             style={{
@@ -108,7 +108,7 @@ const Auth = () => {
           )}
           <label className="checkbox-field"><input type="checkbox" checked={showPassword} onChange={() => setShowPassword(!showPassword)} /> Jelszo mutatasa</label>
           <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', padding: '14px', fontSize: '1rem', borderRadius: 12, marginTop: 4 }}>
-            {loading ? 'Folyamatban...' : (isLogin ? 'Bejelentkezes' : 'Regisztracio')}
+            {loading ? 'Folyamatban...' : (isLogin ? 'Bejelentkezés' : 'Regisztráció')}
           </button>
         </form>
         {isLogin && <p style={{ marginTop: 16, textAlign: 'center', fontSize: '0.9rem' }}><Link to="/forgot-password" style={{ color: 'var(--primary)' }}>Elfelejtett jelszo?</Link></p>}

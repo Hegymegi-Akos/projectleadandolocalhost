@@ -38,8 +38,8 @@ const Favorites = () => {
                   <h3 className="fav-card-name">{product.name}</h3>
                   <p className="fav-card-price">{product.price?.toLocaleString('hu-HU')} Ft</p>
                   <div className="fav-card-actions">
-                    <button onClick={() => addToCart(product)} className="btn-primary fav-btn-cart">Kosarba</button>
-                    <button onClick={() => toggleFavorite(product)} className="btn-danger fav-btn-remove">Torles</button>
+                    <button onClick={() => addToCart(product)} className="btn-primary fav-btn-cart">Kosárba</button>
+                    <button onClick={() => toggleFavorite(product)} className="btn-danger fav-btn-remove">Törlés</button>
                   </div>
                 </div>
               </div>

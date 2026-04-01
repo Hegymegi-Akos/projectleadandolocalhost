@@ -58,11 +58,11 @@ const Admin = () => {
           {/* Summary stats */}
           <h2 className="admin-section-title">Attekintes</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16, marginBottom: 28 }}>
-            <StatCard label="Felhasznalok" value={stats.users?.total} sub={stats.users?.banned > 0 ? `${stats.users.banned} kitiltva` : null} color="var(--primary)" />
+            <StatCard label="Felhasználók" value={stats.users?.total} sub={stats.users?.banned > 0 ? `${stats.users.banned} kitiltva` : null} color="var(--primary)" />
             <StatCard label="Termekek" value={stats.products?.total} sub={`${stats.products?.active || 0} aktiv`} color="var(--secondary)" />
-            <StatCard label="Rendelesek" value={stats.orders?.total} sub={stats.orders?.new_orders > 0 ? `${stats.orders.new_orders} uj` : null} color="var(--accent)" />
+            <StatCard label="Rendelések" value={stats.orders?.total} sub={stats.orders?.new_orders > 0 ? `${stats.orders.new_orders} uj` : null} color="var(--accent)" />
             <StatCard label="Bevetel" value={`${Number(stats.orders?.revenue || 0).toLocaleString('hu-HU')} Ft`} color="#22c55e" />
-            <StatCard label="Velemenyek" value={stats.reviews?.total} sub={`Atlag: ${Number(stats.reviews?.avg_rating || 0).toFixed(1)} / 5`} color="#f59e0b" />
+            <StatCard label="Vélemények" value={stats.reviews?.total} sub={`Átlag: ${Number(stats.reviews?.avg_rating || 0).toFixed(1)} / 5`} color="#f59e0b" />
             <StatCard label="Kuponok" value={stats.coupons?.total} sub={`${stats.coupons?.active || 0} aktiv`} color="#8b5cf6" />
           </div>
 
@@ -70,7 +70,7 @@ const Admin = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 400px), 1fr))', gap: 20, marginBottom: 28 }}>
             {/* Order status breakdown */}
             <div className="ui-card">
-              <h3 style={{ margin: '0 0 16px', fontSize: '1.05rem' }}>Rendeles statuszok</h3>
+              <h3 style={{ margin: '0 0 16px', fontSize: '1.05rem' }}>Rendelés státuszok</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {Object.entries(statusLabels).map(([key, label]) => {
                   const count = Number(stats.orders?.[key === 'uj' ? 'new_orders' : key === 'feldolgozas' ? 'processing' : key] || 0);
@@ -164,10 +164,10 @@ const Admin = () => {
       {/* Quick actions */}
       <h2 className="admin-section-title">Gyors muveletek</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20, maxWidth: 900, margin: '0 auto' }}>
-        <AdminCard to="/admin/products" title="Termekek" desc="Termekek hozzaadasa, szerkesztese, torlese" color="var(--primary)" />
-        <AdminCard to="/admin/users" title="Felhasznalok" desc="Felhasznalok kezelese, torles, tiltas" color="var(--secondary)" />
-        <AdminCard to="/admin/coupons" title="Kuponok" desc="Kuponok kezelese, felhasznalokhoz rendeles" color="var(--accent)" />
-        <AdminCard to="/admin/orders" title="Rendelesek" desc="Rendelesek attekintese, statusz frissites" color="#22c55e" />
+        <AdminCard to="/admin/products" title="Termekek" desc="Termekek hozzaadasa, szerkesztese, törlése" color="var(--primary)" />
+        <AdminCard to="/admin/users" title="Felhasználók" desc="Felhasználók kezelése, törlés, tiltás" color="var(--secondary)" />
+        <AdminCard to="/admin/coupons" title="Kuponok" desc="Kuponok kezelése, felhasználókhoz rendelés" color="var(--accent)" />
+        <AdminCard to="/admin/orders" title="Rendelések" desc="Rendelések áttekintése, státusz frissítés" color="#22c55e" />
       </div>
     </main>
   );

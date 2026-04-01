@@ -5,7 +5,7 @@
 
 class Database {
     private $host = "localhost";
-    private $db_name = "kisalla9_webshop";
+    private $db_name = "kisallat_webshop";
     private $username = "root";
     private $password = "";
     private $charset = "utf8mb4";

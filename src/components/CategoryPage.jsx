@@ -5,7 +5,7 @@ import { categoriesAPI } from '../api/apiService';
 const categoryMeta = {
   dog:     { slug: 'kutya',    title: 'Kutya Termekek',    fallbackImg: '/images/kutya.png' },
   cat:     { slug: 'macska',   title: 'Macska Termekek',   fallbackImg: '/images/macska.png' },
-  rodent:  { slug: 'ragcsalo', title: 'Ragcsalo Termekek', fallbackImg: '/images/ragcsalo.png' },
+  rodent:  { slug: 'ragcsalo', title: 'Rágcsáló Termékek', fallbackImg: '/images/ragcsalo.png' },
   reptile: { slug: 'hullo',    title: 'Hullo Termekek',    fallbackImg: '/images/hullo.png' },
   bird:    { slug: 'madar',    title: 'Madar Termekek',    fallbackImg: '/images/madar.png' },
   fish:    { slug: 'hal',      title: 'Hal Termekek',      fallbackImg: '/images/hal.png' },

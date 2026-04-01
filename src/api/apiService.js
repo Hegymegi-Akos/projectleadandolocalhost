@@ -427,11 +427,41 @@ export const adminCategoriesAPI = {
       method: 'DELETE', headers: withAdminHeaders(getHeaders())
     });
   },
+  async updateSubcategory(id, data) {
+    enforceAdminAccess();
+    return await adminFetch(`${PHP_API_URL}/admin/categories.php/subcategory/${id}`, {
+      method: 'PUT', headers: withAdminHeaders(getHeaders()),
+      body: JSON.stringify(data)
+    });
+  },
   async deleteSubcategory(id) {
     enforceAdminAccess();
     return await adminFetch(`${PHP_API_URL}/admin/categories.php/subcategory/${id}`, {
       method: 'DELETE', headers: withAdminHeaders(getHeaders())
     });
+  }
+};
+
+// ==================== ÜZENETEK ====================
+export const messagesAPI = {
+  async getConversations() {
+    const response = await fetch(`${PHP_API_URL}/messages.php`, { headers: getHeaders() });
+    return await response.json();
+  },
+  async getConversation(userId) {
+    const response = await fetch(`${PHP_API_URL}/messages.php/conversation/${userId}`, { headers: getHeaders() });
+    return await response.json();
+  },
+  async send(fogado_id, uzenet) {
+    const response = await fetch(`${PHP_API_URL}/messages.php`, {
+      method: 'POST', headers: getHeaders(),
+      body: JSON.stringify({ fogado_id, uzenet })
+    });
+    return await response.json();
+  },
+  async getUnreadCount() {
+    const response = await fetch(`${PHP_API_URL}/messages.php/unread`, { headers: getHeaders() });
+    return await response.json();
   }
 };
 

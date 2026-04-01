@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { adminUsersAPI, isAllowedAdminUser } from '../api/apiService';
+import { adminUsersAPI, isAllowedAdminUser, messagesAPI } from '../api/apiService';
 
 const AdminUsers = () => {
   const { user, isAuthenticated } = useAuth();
@@ -13,6 +13,10 @@ const AdminUsers = () => {
   const [expandedUser, setExpandedUser] = useState(null);
   const [userOrders, setUserOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [chatUser, setChatUser] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatMsg, setChatMsg] = useState('');
+  const [chatSending, setChatSending] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated || !isAllowedAdminUser(user)) { navigate('/admin'); return; }
@@ -53,7 +57,7 @@ const AdminUsers = () => {
       await adminUsersAPI.deleteUser(targetUser.id);
       await loadUsers();
     } catch (err) {
-      setError(err.message || 'Torles sikertelen');
+      setError(err.message || 'Törlés sikertelen');
     } finally {
       setBusyUserId(null);
     }
@@ -77,6 +81,27 @@ const AdminUsers = () => {
     }
   };
 
+  const openChat = async (targetUser) => {
+    setChatUser(targetUser);
+    try {
+      const data = await messagesAPI.getConversation(targetUser.id);
+      setChatMessages(Array.isArray(data) ? data : []);
+    } catch { setChatMessages([]); }
+  };
+
+  const handleSendChat = async (e) => {
+    e.preventDefault();
+    if (!chatMsg.trim() || !chatUser) return;
+    setChatSending(true);
+    try {
+      await messagesAPI.send(chatUser.id, chatMsg.trim());
+      setChatMsg('');
+      const data = await messagesAPI.getConversation(chatUser.id);
+      setChatMessages(Array.isArray(data) ? data : []);
+    } catch {}
+    finally { setChatSending(false); }
+  };
+
   const handleViewOrders = async (userId) => {
     if (expandedUser === userId) {
       setExpandedUser(null);
@@ -90,7 +115,7 @@ const AdminUsers = () => {
       setUserOrders(Array.isArray(data) ? data : []);
     } catch (err) {
       setUserOrders([]);
-      setError('Rendelesek betoltese sikertelen: ' + (err.message || ''));
+      setError('Rendelések betöltése sikertelen: ' + (err.message || ''));
     } finally {
       setOrdersLoading(false);
     }
@@ -105,7 +130,7 @@ const AdminUsers = () => {
 
   return (
     <main className="admin-page container page">
-      <h1 className="page-title">Admin - Felhasznalok</h1>
+      <h1 className="page-title">Admin - Felhasználók</h1>
       {error && <div style={{ color: '#ef4444', marginBottom: 16, padding: '12px 16px', background: 'rgba(239,68,68,0.1)', borderRadius: 10, fontWeight: 600, fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
 
       {loading ? <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Betoltes...</p> : (
@@ -156,11 +181,17 @@ const AdminUsers = () => {
                       ) : (
                         <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
                           <button
+                            onClick={() => openChat(u)}
+                            style={{ padding: '6px 10px', fontSize: '0.8rem', borderRadius: 6, border: 'none', cursor: 'pointer', fontWeight: 600, background: '#6366f1', color: '#fff' }}
+                          >
+                            Uzenet
+                          </button>
+                          <button
                             onClick={() => handleViewOrders(u.id)}
                             className="btn-secondary"
                             style={{ padding: '6px 10px', fontSize: '0.8rem', background: expandedUser === u.id ? '#3b82f6' : undefined, color: expandedUser === u.id ? '#fff' : undefined }}
                           >
-                            {expandedUser === u.id ? 'Bezar' : 'Rendelesek'}
+                            {expandedUser === u.id ? 'Bezár' : 'Rendelések'}
                           </button>
                           <button
                             onClick={() => handleBanToggle(u)}
@@ -184,7 +215,7 @@ const AdminUsers = () => {
                             className="btn-danger"
                             style={{ padding: '6px 10px', fontSize: '0.8rem', background: '#7f1d1d' }}
                           >
-                            Torles
+                            Törlés
                           </button>
                         </div>
                       )}
@@ -261,6 +292,56 @@ const AdminUsers = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {/* Chat modal */}
+      {chatUser && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }} onClick={() => setChatUser(null)}>
+          <div style={{ background: 'var(--surface-bg, #fff)', borderRadius: 20, width: '100%', maxWidth: 480, maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 80px rgba(0,0,0,0.25)' }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.05))' }}>
+              <div>
+                <strong style={{ fontSize: '1rem' }}>{chatUser.felhasznalonev}</strong>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{chatUser.email}</div>
+              </div>
+              <button onClick={() => setChatUser(null)} style={{ background: 'rgba(0,0,0,0.05)', border: 'none', width: 32, height: 32, borderRadius: 8, fontSize: 16, cursor: 'pointer', fontWeight: 700 }}>✕</button>
+            </div>
+
+            {/* Messages */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 8, minHeight: 250, maxHeight: 400 }}>
+              {chatMessages.length === 0 && (
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40, fontSize: '0.9rem' }}>Meg nincs uzenet. Irj elsokent!</div>
+              )}
+              {chatMessages.map(msg => {
+                const isMe = Number(msg.kuldo_id) === Number(user?.id);
+                return (
+                  <div key={msg.id} style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
+                    <div style={{
+                      maxWidth: '75%', padding: '10px 14px',
+                      borderRadius: isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                      background: isMe ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(0,0,0,0.05)',
+                      color: isMe ? '#fff' : 'var(--text-primary)',
+                    }}>
+                      <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5 }}>{msg.uzenet}</p>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.65rem', opacity: 0.7, textAlign: 'right' }}>
+                        {new Date(msg.letrehozva).toLocaleString('hu-HU', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Send */}
+            <form onSubmit={handleSendChat} style={{ padding: '12px 16px', borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: 8 }}>
+              <input value={chatMsg} onChange={e => setChatMsg(e.target.value)} placeholder="Irj uzenetet..." style={{ flex: 1, padding: '10px 14px', borderRadius: 12, border: '2px solid rgba(0,0,0,0.08)', fontSize: '0.9rem', outline: 'none' }} />
+              <button type="submit" disabled={chatSending || !chatMsg.trim()} style={{
+                padding: '10px 20px', borderRadius: 12, border: 'none', cursor: 'pointer',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff', fontWeight: 700,
+                opacity: chatSending || !chatMsg.trim() ? 0.5 : 1,
+              }}>{chatSending ? '...' : 'Kuldes'}</button>
+            </form>
+          </div>
         </div>
       )}
     </main>

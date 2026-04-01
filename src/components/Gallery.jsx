@@ -15,7 +15,7 @@ export default function Gallery() {
 
   return (
     <div className="container page">
-      <h1 className="page-title">Galeria</h1>
+      <h1 className="page-title">Galéria</h1>
       {images.length === 0 ? <p>Nincs kep.</p> : (
         <div className="gallery-grid">
           {images.map((src, i) => (

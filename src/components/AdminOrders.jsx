@@ -41,7 +41,7 @@ const AdminOrders = () => {
 
   return (
     <main className="admin-page container page">
-      <h1 className="admin-page-title">Rendelesek</h1>
+      <h1 className="admin-page-title">Rendelések</h1>
       {error && <div className="admin-error">{error}</div>}
 
       {loading ? <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>Betoltes...</p> : (
@@ -50,7 +50,7 @@ const AdminOrders = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Felhasznalo</th>
+                <th>Felhasználó</th>
                 <th>Osszeg</th>
                 <th>Statusz</th>
                 <th>Datum</th>
@@ -85,7 +85,7 @@ const AdminOrders = () => {
                         ))}
                       </select>
                       <button onClick={() => { const url = adminOrdersAPI.getInvoiceUrl(o.id); const token = localStorage.getItem('token'); window.open(`${url}?token=${encodeURIComponent(token)}&secret=Admin123`, '_blank'); }} className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>Szamla</button>
-                      <button onClick={() => handleDelete(o.id)} className="btn-danger" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>Torles</button>
+                      <button onClick={() => handleDelete(o.id)} className="btn-danger" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>Törlés</button>
                     </div>
                   </td>
                 </tr>

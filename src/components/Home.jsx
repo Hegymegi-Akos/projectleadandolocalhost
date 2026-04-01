@@ -19,12 +19,12 @@ const Home = () => {
   const clearFilters = () => { setSortBy(''); setMinPrice(''); setMaxPrice(''); };
 
   const categories = [
-    { path: '/dog', img: '/images/kutya.png', name: 'Kutya', desc: 'Jatekok, tapok, felszerelesek', color: '#fef3c7' },
-    { path: '/cat', img: '/images/macska.png', name: 'Macska', desc: 'Jatekok es macskatapok', color: '#fce7f3' },
-    { path: '/rodent', img: '/images/ragcsalo.png', name: 'Ragcsalo', desc: 'Allvanyok, alom, kaja', color: '#dcfce7' },
-    { path: '/reptile', img: '/images/hullo.png', name: 'Hullo', desc: 'Terrarium felszerelesek', color: '#e0e7ff' },
-    { path: '/bird', img: '/images/madar.png', name: 'Madar', desc: 'Kalitkak, eleseg', color: '#fef9c3' },
-    { path: '/fish', img: '/images/hal.png', name: 'Hal', desc: 'Akvarisztikai kellekek', color: '#cffafe' }
+    { path: '/dog', img: '/images/kutya.png', name: 'Kutya', desc: 'Játékok, tápok, felszerelések', color: '#fef3c7' },
+    { path: '/cat', img: '/images/macska.png', name: 'Macska', desc: 'Játékok és macskatápok', color: '#fce7f3' },
+    { path: '/rodent', img: '/images/ragcsalo.png', name: 'Rágcsáló', desc: 'Állványok, alom, kaja', color: '#dcfce7' },
+    { path: '/reptile', img: '/images/hullo.png', name: 'Hüllő', desc: 'Terrárium felszerelések', color: '#e0e7ff' },
+    { path: '/bird', img: '/images/madar.png', name: 'Madár', desc: 'Kalitkák, eleség', color: '#fef9c3' },
+    { path: '/fish', img: '/images/hal.png', name: 'Hal', desc: 'Akvarisztikai kellékek', color: '#cffafe' }
   ];
 
   return (
@@ -49,26 +49,26 @@ const Home = () => {
         {/* Filter bar */}
         <div className="filter-bar">
           <div>
-            <label>Rendezes</label>
+            <label>Rendezés</label>
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="">Alapertelmezett</option>
-              <option value="low">Ar: Alacsony - Magas</option>
-              <option value="high">Ar: Magas - Alacsony</option>
+              <option value="">Alapértelmezett</option>
+              <option value="low">Ár: Alacsony - Magas</option>
+              <option value="high">Ár: Magas - Alacsony</option>
             </select>
           </div>
           <div>
-            <label>Min. ar (Ft)</label>
+            <label>Min. ár (Ft)</label>
             <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="0" />
           </div>
           <div>
-            <label>Max. ar (Ft)</label>
+            <label>Max. ár (Ft)</label>
             <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="999999" />
           </div>
           {(sortBy || minPrice || maxPrice) && (
             <button onClick={clearFilters} style={{
               padding: '10px 20px', background: 'var(--danger-light)', color: 'var(--danger)',
               border: 'none', borderRadius: 10, cursor: 'pointer', fontWeight: 700, alignSelf: 'end'
-            }}>Szurok torlese</button>
+            }}>Szűrők törlése</button>
           )}
         </div>
 

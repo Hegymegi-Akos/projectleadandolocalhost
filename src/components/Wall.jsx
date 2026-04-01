@@ -82,20 +82,20 @@ function Wall() {
     setSubmitting(true);
     try {
       await reviewsAPI.create({ termek_id: Number(reviewForm.termek_id), ertekeles: reviewForm.ertekeles, cim: reviewForm.cim.trim(), velemeny: reviewForm.velemeny.trim() });
-      setSubmitSuccess('Velemeny sikeresen elkuldve!');
+      setSubmitSuccess('Vélemény sikeresen elküldve!');
       setReviewForm({ termek_id: '', ertekeles: 5, cim: '', velemeny: '' });
     } catch (err) { setSubmitError(err.message); }
     finally { setSubmitting(false); }
   };
 
-  if (!isAuthenticated) return <main className="container page"><h1 className="page-title">Velemenyek & Fal</h1><section className="ui-card"><p>Be kell jelentkezned.</p><Link to="/login">Bejelentkezes</Link></section></main>;
+  if (!isAuthenticated) return <main className="container page"><h1 className="page-title">Vélemények & Fal</h1><section className="ui-card"><p>Be kell jelentkezned.</p><Link to="/login">Bejelentkezés</Link></section></main>;
 
   return (
     <main className="container page">
-      <h1 className="page-title">Velemenyek & Fal</h1>
+      <h1 className="page-title">Vélemények & Fal</h1>
       <nav style={{ display:'flex', gap:8, marginBottom:20, flexWrap:'wrap' }}>
         <button onClick={() => setActiveTab('wall')} className={activeTab === 'wall' ? 'btn-primary' : 'btn-secondary'}>Fal</button>
-        <button onClick={() => setActiveTab('reviews')} className={activeTab === 'reviews' ? 'btn-primary' : 'btn-secondary'}>Velemenyek</button>
+        <button onClick={() => setActiveTab('reviews')} className={activeTab === 'reviews' ? 'btn-primary' : 'btn-secondary'}>Vélemények</button>
         <button onClick={() => setActiveTab('write')} className={activeTab === 'write' ? 'btn-primary' : 'btn-secondary'}>Uj velemeny</button>
       </nav>
 
@@ -104,7 +104,7 @@ function Wall() {
           <h2 className="section-title">Kozossegi Fal</h2>
           <form onSubmit={handlePostSubmit} style={{ marginBottom:20 }}>
             <textarea value={newPost} onChange={(e) => setNewPost(e.target.value)} placeholder="Mi jar a fejedben?" maxLength={1000} style={{ width:'100%', minHeight:80, padding:12, borderRadius:8, border:'1px solid #d1d5db', marginBottom:8, resize:'vertical' }} />
-            <button type="submit" className="btn-primary" disabled={posting || !newPost.trim()}>{posting ? 'Kuldes...' : 'Kozzetetetel'}</button>
+            <button type="submit" className="btn-primary" disabled={posting || !newPost.trim()}>{posting ? 'Küldés...' : 'Kozzetetetel'}</button>
           </form>
           {wallError && <div style={{ color:'#ef4444', marginBottom:12 }}>{wallError}</div>}
           {wallLoading ? <p>Betoltes...</p> : wallPosts.length === 0 ? <p>Meg nincsenek bejegyzesek.</p> : (
@@ -112,8 +112,8 @@ function Wall() {
               {wallPosts.map(post => (
                 <div key={post.id} style={{ padding:16, borderRadius:12, background:'rgba(59,130,246,0.03)', border:'1px solid rgba(59,130,246,0.1)' }}>
                   <div style={{ display:'flex', justifyContent:'space-between' }}>
-                    <div><strong>{post.felhasznalonev || 'Felhasznalo'}</strong> <span style={{ color:'#666', fontSize:'0.8rem' }}>{new Date(post.letrehozva).toLocaleString('hu-HU')}</span></div>
-                    {(user?.id === post.felhasznalo_id || user?.admin) && <button onClick={() => handleDeletePost(post.id)} style={{ background:'none', border:'none', cursor:'pointer' }}>Torles</button>}
+                    <div><strong>{post.felhasznalonev || 'Felhasználó'}</strong> <span style={{ color:'#666', fontSize:'0.8rem' }}>{new Date(post.letrehozva).toLocaleString('hu-HU')}</span></div>
+                    {(user?.id === post.felhasznalo_id || user?.admin) && <button onClick={() => handleDeletePost(post.id)} style={{ background:'none', border:'none', cursor:'pointer' }}>Törlés</button>}
                   </div>
                   <p style={{ marginTop:8, whiteSpace:'pre-wrap' }}>{post.szoveg}</p>
                 </div>
@@ -125,7 +125,7 @@ function Wall() {
 
       {activeTab === 'reviews' && (
         <section className="ui-card">
-          <h2 className="section-title">Termek Velemenyek</h2>
+          <h2 className="section-title">Termék Vélemények</h2>
           {reviewsError && <div style={{ color:'#ef4444', marginBottom:12 }}>{reviewsError}</div>}
           {reviewsLoading ? <p>Betoltes...</p> : reviews.length === 0 ? <p>Meg nincsenek velemenyek.</p> : (
             <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
@@ -136,7 +136,7 @@ function Wall() {
                   <p style={{ marginTop:8 }}>{review.velemeny}</p>
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                     <span style={{ fontSize:'0.8rem', color:'#666' }}>{review.felhasznalonev || review.vendeg_nev || 'Nevtelen'} - {new Date(review.datum).toLocaleDateString('hu-HU')}</span>
-                    {isAdmin && <button onClick={() => handleDeleteReview(review.id)} style={{ background:'none', border:'none', cursor:'pointer', color:'#ef4444', fontSize:'0.85rem' }}>Torles</button>}
+                    {isAdmin && <button onClick={() => handleDeleteReview(review.id)} style={{ background:'none', border:'none', cursor:'pointer', color:'#ef4444', fontSize:'0.85rem' }}>Törlés</button>}
                   </div>
                 </div>
               ))}
@@ -147,7 +147,7 @@ function Wall() {
 
       {activeTab === 'write' && (
         <section className="ui-card">
-          <h2 className="section-title">Uj Velemeny Irasa</h2>
+          <h2 className="section-title">Új Vélemény Írása</h2>
           {submitError && <div style={{ color:'#ef4444', marginBottom:12, padding:12, background:'#fef2f2', borderRadius:8 }}>{submitError}</div>}
           {submitSuccess && <div style={{ color:'#22c55e', marginBottom:12, padding:12, background:'#f0fdf4', borderRadius:8 }}>{submitSuccess}</div>}
           <form onSubmit={handleReviewSubmit} className="form-grid">
@@ -160,7 +160,7 @@ function Wall() {
               </select>
             </div>
             <div className="form-field">
-              <label>Ertekeles</label>
+              <label>Értékelés</label>
               <div style={{ display:'flex', gap:8 }}>
                 {[1,2,3,4,5].map(star => (
                   <button key={star} type="button" onClick={() => setReviewForm(prev => ({...prev, ertekeles: star}))} style={{ background:'none', border:'none', fontSize:28, cursor:'pointer', color: star <= reviewForm.ertekeles ? '#f59e0b' : '#d1d5db' }}>*</button>
@@ -168,8 +168,8 @@ function Wall() {
               </div>
             </div>
             <div className="form-field"><label>Cim</label><input value={reviewForm.cim} onChange={(e) => setReviewForm(prev => ({...prev, cim: e.target.value}))} maxLength={100} /></div>
-            <div className="form-field"><label>Velemeny</label><textarea value={reviewForm.velemeny} onChange={(e) => setReviewForm(prev => ({...prev, velemeny: e.target.value}))} maxLength={2000} /></div>
-            <button type="submit" className="btn-primary" disabled={submitting}>{submitting ? 'Kuldes...' : 'Velemeny Bekuldese'}</button>
+            <div className="form-field"><label>Vélemény</label><textarea value={reviewForm.velemeny} onChange={(e) => setReviewForm(prev => ({...prev, velemeny: e.target.value}))} maxLength={2000} /></div>
+            <button type="submit" className="btn-primary" disabled={submitting}>{submitting ? 'Küldés...' : 'Vélemény Beküldése'}</button>
           </form>
         </section>
       )}
