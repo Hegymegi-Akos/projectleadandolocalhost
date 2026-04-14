@@ -38,7 +38,7 @@ if (!$user) {
 }
 
 $data = json_decode(file_get_contents('php://input'));
-$user_id = $user['id'];
+$user_id = $user['user_id'];
 
 // GET /messages.php - sajat uzenetek (beszelgetesek listaja)
 if ($method === 'GET' && strpos($request_uri, '/conversation/') !== false) {
