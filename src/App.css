@@ -155,8 +155,23 @@ body::before {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
-  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 100px;
+  color: var(--color-text);
+  transition: background 200ms, color 200ms;
+}
+.theme-toggle:hover {
+  background: var(--color-bg-alt);
+  color: var(--primary);
+}
+.theme-toggle svg {
+  color: #f59e0b; /* napsárga ikon */
+}
+body.dark .theme-toggle svg,
+.dark .theme-toggle svg {
+  color: #fbbf24;
 }
 
 /* ---- User menu button ---- */
