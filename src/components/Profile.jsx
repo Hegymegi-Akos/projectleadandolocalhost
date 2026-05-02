@@ -12,7 +12,6 @@ const Profile = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [editing, setEditing] = useState(false);
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const [showPwd, setShowPwd] = useState(false);
@@ -33,7 +32,6 @@ const Profile = () => {
             iranyitoszam: u.iranyitoszam || '',
             varos: u.varos || '',
             cim: u.cim || '',
-            jelszo: '', jelszo2: ''
           }));
         }
       } catch {}
@@ -74,7 +72,6 @@ const Profile = () => {
       if (form.jelszo) payload.jelszo = form.jelszo;
       const result = await authAPI.updateProfile(payload);
       setMsg(result.message || 'Adatok sikeresen mentve!');
-      setEditing(false);
       setForm(prev => ({ ...prev, jelszo: '', jelszo2: '' }));
       setTimeout(() => setMsg(''), 3000);
     } catch (e2) {
@@ -83,9 +80,6 @@ const Profile = () => {
   };
 
   if (loading) return <main className="container page" style={{ textAlign: 'center', padding: 60 }}>Betöltés...</main>;
-
-  const ro = !editing;
-  const roStyle = ro ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : undefined;
 
   return (
     <main className="container page" style={{ maxWidth: 720, margin: '0 auto' }}>
@@ -97,67 +91,56 @@ const Profile = () => {
         <form onSubmit={save} className="form-grid">
           <div className="form-field">
             <label>Felhasználónév</label>
-            <input value={form.felhasznalonev} readOnly style={{ background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' }} />
+            <input value={form.felhasznalonev} disabled style={{ background: 'rgba(0,0,0,0.04)', cursor: 'not-allowed' }} />
           </div>
           <div className="form-field">
             <label>Email</label>
-            <input type="email" value={form.email} onChange={e => update('email', e.target.value)} readOnly={ro} style={roStyle} placeholder="példa@email.hu" />
+            <input type="email" value={form.email} onChange={e => update('email', e.target.value)} placeholder="példa@email.hu" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div className="form-field">
               <label>Vezetéknév</label>
-              <input value={form.vezeteknev} maxLength={20} onChange={e => update('vezeteknev', e.target.value)} readOnly={ro} style={roStyle} placeholder="Kovács" />
+              <input value={form.vezeteknev} maxLength={20} onChange={e => update('vezeteknev', e.target.value)} placeholder="Kovács" />
             </div>
             <div className="form-field">
               <label>Keresztnév</label>
-              <input value={form.keresztnev} maxLength={20} onChange={e => update('keresztnev', e.target.value)} readOnly={ro} style={roStyle} placeholder="János" />
+              <input value={form.keresztnev} maxLength={20} onChange={e => update('keresztnev', e.target.value)} placeholder="János" />
             </div>
           </div>
           <div className="form-field">
             <label>Telefon</label>
-            <input value={form.telefon} inputMode="tel" onChange={e => update('telefon', e.target.value.replace(/[^0-9+ ]/g, ''))} readOnly={ro} style={roStyle} placeholder="+36 30 123 4567" />
+            <input value={form.telefon} inputMode="tel" onChange={e => update('telefon', e.target.value.replace(/[^0-9+ ]/g, ''))} placeholder="+36 30 123 4567" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 12 }}>
             <div className="form-field">
               <label>Irányítószám</label>
-              <input value={form.iranyitoszam} maxLength={4} inputMode="numeric" onChange={e => update('iranyitoszam', e.target.value.replace(/[^0-9]/g, ''))} readOnly={ro} style={roStyle} placeholder="1234" />
+              <input value={form.iranyitoszam} maxLength={4} inputMode="numeric" onChange={e => update('iranyitoszam', e.target.value.replace(/[^0-9]/g, ''))} placeholder="1234" />
             </div>
             <div className="form-field">
               <label>Város</label>
-              <input value={form.varos} onChange={e => update('varos', e.target.value)} readOnly={ro} style={roStyle} placeholder="Budapest" />
+              <input value={form.varos} onChange={e => update('varos', e.target.value)} placeholder="Budapest" />
             </div>
           </div>
           <div className="form-field">
             <label>Cím</label>
-            <input value={form.cim} onChange={e => update('cim', e.target.value)} readOnly={ro} style={roStyle} placeholder="Utca, házszám" />
+            <input value={form.cim} onChange={e => update('cim', e.target.value)} placeholder="Utca, házszám" />
           </div>
 
-          {editing && (
-            <>
-              <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.08)', margin: '8px 0' }} />
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>Új jelszó (opcionális):</p>
-              <div className="form-field">
-                <label>Új jelszó</label>
-                <input type={showPwd ? 'text' : 'password'} value={form.jelszo} onChange={e => update('jelszo', e.target.value)} placeholder="Hagyd üresen, ha nem változtatod" />
-              </div>
-              <div className="form-field">
-                <label>Új jelszó újra</label>
-                <input type={showPwd ? 'text' : 'password'} value={form.jelszo2} onChange={e => update('jelszo2', e.target.value)} placeholder="Jelszó megerősítése" />
-              </div>
-              <label className="checkbox-field"><input type="checkbox" checked={showPwd} onChange={() => setShowPwd(!showPwd)} /> Jelszó mutatása</label>
-            </>
-          )}
-
-          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-            {!editing ? (
-              <button type="button" className="btn-primary" onClick={() => { setEditing(true); setErr(''); setMsg(''); }} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>Szerkesztés</button>
-            ) : (
-              <>
-                <button type="submit" className="btn-primary" disabled={saving} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>{saving ? 'Mentés...' : 'Mentés'}</button>
-                <button type="button" className="btn-secondary" onClick={() => { setEditing(false); setErr(''); setForm(prev => ({ ...prev, jelszo: '', jelszo2: '' })); }} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>Mégse</button>
-              </>
-            )}
+          <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.08)', margin: '8px 0' }} />
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>Új jelszó (opcionális — csak akkor töltsd ki, ha cserélni szeretnéd):</p>
+          <div className="form-field">
+            <label>Új jelszó</label>
+            <input type={showPwd ? 'text' : 'password'} value={form.jelszo} onChange={e => update('jelszo', e.target.value)} placeholder="Hagyd üresen, ha nem változtatod" />
           </div>
+          <div className="form-field">
+            <label>Új jelszó újra</label>
+            <input type={showPwd ? 'text' : 'password'} value={form.jelszo2} onChange={e => update('jelszo2', e.target.value)} placeholder="Jelszó megerősítése" />
+          </div>
+          <label className="checkbox-field"><input type="checkbox" checked={showPwd} onChange={() => setShowPwd(!showPwd)} /> Jelszó mutatása</label>
+
+          <button type="submit" className="btn-primary" disabled={saving} style={{ width: '100%', padding: '14px', borderRadius: 12, fontSize: '1rem', marginTop: 8 }}>
+            {saving ? 'Mentés...' : 'Mentés'}
+          </button>
         </form>
       </section>
     </main>
