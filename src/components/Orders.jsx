@@ -4,9 +4,9 @@ import { ordersAPI } from '../api/apiService';
 import { useNavigate } from 'react-router-dom';
 
 const statusColors = { uj: '#3b82f6', feldolgozas: '#f59e0b', fizetve: '#8b5cf6', kesz: '#22c55e', storno: '#ef4444' };
-const statusLabels = { uj: 'Uj', feldolgozas: 'Feldolgozas alatt', fizetve: 'Fizetve', kesz: 'Kiszallitva', storno: 'Stornozva' };
+const statusLabels = { uj: 'Új', feldolgozas: 'Feldolgozás alatt', fizetve: 'Fizetve', kesz: 'Kiszállítva', storno: 'Stornózva' };
 const statusSteps = ['uj', 'feldolgozas', 'fizetve', 'kesz'];
-const statusStepLabels = { uj: 'Leadva', feldolgozas: 'Feldolgozas', fizetve: 'Fizetve', kesz: 'Kiszallitva' };
+const statusStepLabels = { uj: 'Leadva', feldolgozas: 'Feldolgozás', fizetve: 'Fizetve', kesz: 'Kiszállítva' };
 
 const OrderTimeline = ({ status }) => {
   if (status === 'storno') return (

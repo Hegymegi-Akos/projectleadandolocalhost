@@ -28,7 +28,7 @@ const Contact = () => {
       setTimeout(() => setStatus(''), 5000);
     } catch (err) {
       setStatus('error');
-      setErrorMsg('Nem sikerult elkuldeni az uzenetet. Probald ujra kesobb!');
+      setErrorMsg('Nem sikerült elküldeni az üzenetet. Próbáld újra később!');
       setTimeout(() => { setStatus(''); setErrorMsg(''); }, 5000);
     }
   };
@@ -54,14 +54,14 @@ const Contact = () => {
         {/* Bal oldal - info */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="ui-card" style={{ padding: 24 }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '1.15rem', fontWeight: 800 }}>Elerhetosegeink</h3>
+            <h3 style={{ margin: '0 0 16px', fontSize: '1.15rem', fontWeight: 800 }}>Elérhetőségeink</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 2 }}>Cim</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 2 }}>Cím</div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.5 }}>1234 Budapest, Kisállat utca 12.</div>
                 </div>
               </div>
@@ -87,12 +87,12 @@ const Contact = () => {
           </div>
 
           <div className="ui-card" style={{ padding: 24 }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '1.15rem', fontWeight: 800 }}>Nyitvatartas</h3>
+            <h3 style={{ margin: '0 0 16px', fontSize: '1.15rem', fontWeight: 800 }}>Nyitvatartás</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: '0.9rem' }}>
               {[
-                { nap: 'Hetfo - Pentek', ora: '9:00 - 18:00', active: true },
+                { nap: 'Hétfő - Péntek', ora: '9:00 - 18:00', active: true },
                 { nap: 'Szombat', ora: '9:00 - 14:00', active: true },
-                { nap: 'Vasarnap', ora: 'Zarva', active: false },
+                { nap: 'Vasárnap', ora: 'Zárva', active: false },
               ].map(({ nap, ora, active }) => (
                 <div key={nap} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', borderRadius: 8, background: active ? 'rgba(16,185,129,0.06)' : 'rgba(239,68,68,0.06)' }}>
                   <span style={{ fontWeight: 600 }}>{nap}</span>
@@ -104,7 +104,7 @@ const Contact = () => {
 
           <div className="ui-card" style={{ padding: 0, overflow: 'hidden', borderRadius: 16, height: 200 }}>
             <iframe
-              title="Terkep"
+              title="Térkép"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2695.5!2d19.04!3d47.49!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sBudapest!5e0!3m2!1shu!2shu!4v1"
               width="100%" height="200" style={{ border: 0 }} allowFullScreen loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -116,8 +116,8 @@ const Contact = () => {
         <div className="ui-card" style={{ padding: 0, overflow: 'hidden' }}>
           {/* Header */}
           <div style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', padding: '24px 28px', color: '#fff' }}>
-            <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Irj nekunk!</h3>
-            <p style={{ margin: '6px 0 0', fontSize: '0.85rem', opacity: 0.85 }}>Kerdesed van? Szivesen segitunk!</p>
+            <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Írj nekünk!</h3>
+            <p style={{ margin: '6px 0 0', fontSize: '0.85rem', opacity: 0.85 }}>Kérdésed van? Szívesen segítünk!</p>
           </div>
 
           <div style={{ padding: '24px 28px' }}>
@@ -125,7 +125,7 @@ const Contact = () => {
             {status === 'success' && (
               <div style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.1))', color: '#059669', padding: '16px 20px', borderRadius: 12, marginBottom: 20, fontWeight: 700, textAlign: 'center', border: '1px solid rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                Uzenet sikeresen elkuldve! Hamarosan valaszolunk.
+                Üzenet sikeresen elküldve! Hamarosan válaszolunk.
               </div>
             )}
             {status === 'error' && (
@@ -137,23 +137,23 @@ const Contact = () => {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={labelStyle}>Nev *</label>
-                  <input value={form.nev} onChange={e => setForm(p => ({ ...p, nev: e.target.value }))} required placeholder="Teljes nev" style={inputStyle} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
+                  <label style={labelStyle}>Név *</label>
+                  <input value={form.nev} onChange={e => setForm(p => ({ ...p, nev: e.target.value }))} required placeholder="Teljes név" style={inputStyle} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
                 </div>
                 <div>
                   <label style={labelStyle}>Email *</label>
-                  <input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} required placeholder="pelda@email.com" style={inputStyle} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
+                  <input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} required placeholder="példa@email.com" style={inputStyle} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
                 </div>
               </div>
 
               <div>
-                <label style={labelStyle}>Targy</label>
-                <input value={form.targy} onChange={e => setForm(p => ({ ...p, targy: e.target.value }))} placeholder="Miben segithetunk?" style={inputStyle} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
+                <label style={labelStyle}>Tárgy</label>
+                <input value={form.targy} onChange={e => setForm(p => ({ ...p, targy: e.target.value }))} placeholder="Miben segíthetünk?" style={inputStyle} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
               </div>
 
               <div>
-                <label style={labelStyle}>Uzenet *</label>
-                <textarea value={form.uzenet} onChange={e => setForm(p => ({ ...p, uzenet: e.target.value }))} required rows={5} placeholder="Ird le az uzeneted reszletesen..." style={{ ...inputStyle, resize: 'vertical', minHeight: 120 }} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
+                <label style={labelStyle}>Üzenet *</label>
+                <textarea value={form.uzenet} onChange={e => setForm(p => ({ ...p, uzenet: e.target.value }))} required rows={5} placeholder="Írd le az üzeneted részletesen..." style={{ ...inputStyle, resize: 'vertical', minHeight: 120 }} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
               </div>
 
               <button
@@ -170,12 +170,12 @@ const Contact = () => {
                 {status === 'sending' ? (
                   <>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" style={{ animation: 'spin 1s linear infinite' }}><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                    Kuldes...
+                    Küldés...
                   </>
                 ) : (
                   <>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    Uzenet kuldese
+                    Üzenet küldése
                   </>
                 )}
               </button>

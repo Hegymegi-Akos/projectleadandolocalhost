@@ -8,7 +8,7 @@ const Footer = () => {
         <div>
           <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: 12 }}>Kisállat Webshop</h4>
           <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.6 }}>
-            Minosegi allateledel es kiegeszitok - gyors kiszallitas szerte az orszagban.
+            Minőségi állateledel és kiegészítők - gyors kiszállítás szerte az országban.
           </p>
         </div>
         <div>

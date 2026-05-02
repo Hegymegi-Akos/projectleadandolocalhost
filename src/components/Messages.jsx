@@ -65,7 +65,7 @@ const Messages = () => {
     finally { setSending(false); }
   };
 
-  if (loading) return <div className="container page" style={{ textAlign: 'center', padding: 60 }}>Betoltes...</div>;
+  if (loading) return <div className="container page" style={{ textAlign: 'center', padding: 60 }}>Betöltés...</div>;
 
   return (
     <main className="container page">
@@ -75,11 +75,11 @@ const Messages = () => {
         {/* Beszelgetesek lista */}
         <div className="ui-card" style={{ padding: 0, overflow: 'hidden', display: activeChat && window.innerWidth < 700 ? 'none' : 'block' }}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(0,0,0,0.06)', fontWeight: 700, fontSize: '0.95rem' }}>
-            Beszelgetesek
+            Beszélgetések
           </div>
           {conversations.length === 0 ? (
             <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              Meg nincs beszelgetesed.
+              Még nincs beszélgetésed.
             </div>
           ) : (
             conversations.map(conv => (
@@ -118,7 +118,7 @@ const Messages = () => {
             <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 8, minHeight: 300, maxHeight: 400 }}>
               {messages.length === 0 && (
                 <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40, fontSize: '0.9rem' }}>
-                  Kezdj el beszelgetni!
+                  Kezdj el beszélgetni!
                 </div>
               )}
               {messages.map(msg => {
@@ -143,19 +143,19 @@ const Messages = () => {
 
             {/* Uzenet kuldes */}
             <form onSubmit={handleSend} style={{ padding: '12px 16px', borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: 8 }}>
-              <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Irj uzenetet..." style={{ flex: 1, padding: '10px 14px', borderRadius: 12, border: '2px solid rgba(0,0,0,0.08)', fontSize: '0.9rem', outline: 'none' }} />
+              <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Írj üzenetet..." style={{ flex: 1, padding: '10px 14px', borderRadius: 12, border: '2px solid rgba(0,0,0,0.08)', fontSize: '0.9rem', outline: 'none' }} />
               <button type="submit" disabled={sending || !newMsg.trim()} style={{
                 padding: '10px 20px', borderRadius: 12, border: 'none', cursor: 'pointer',
                 background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff', fontWeight: 700, fontSize: '0.85rem',
                 opacity: sending || !newMsg.trim() ? 0.5 : 1,
-              }}>Kuldes</button>
+              }}>Küldés</button>
             </form>
           </div>
         )}
 
         {!activeChat && conversations.length > 0 && (
           <div className="ui-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-            Valassz egy beszelgetest a bal oldalon.
+            Válassz egy beszélgetést a bal oldalon.
           </div>
         )}
       </div>
