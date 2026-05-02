@@ -156,18 +156,22 @@ body::before {
   border: none;
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 8px 14px;
   border-radius: 100px;
-  color: var(--color-text);
+  color: #10b981; /* zöld szöveg */
   transition: background 200ms, color 200ms;
 }
 .theme-toggle:hover {
-  background: var(--color-bg-alt);
-  color: var(--primary);
+  background: rgba(16,185,129,0.12);
+  color: #059669;
 }
 .theme-toggle svg {
   color: #f59e0b; /* napsárga ikon */
+}
+body.dark .theme-toggle,
+.dark .theme-toggle {
+  color: #34d399;
 }
 body.dark .theme-toggle svg,
 .dark .theme-toggle svg {
