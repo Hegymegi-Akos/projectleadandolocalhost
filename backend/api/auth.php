@@ -22,6 +22,8 @@ if (strpos($request_uri, '/register') !== false && $method === 'POST') {
     login($db);
 } elseif (strpos($request_uri, '/me') !== false && $method === 'GET') {
     getCurrentUserInfo($db);
+} elseif (strpos($request_uri, '/me') !== false && ($method === 'PUT' || $method === 'POST')) {
+    updateCurrentUser($db);
 } elseif (strpos($request_uri, '/check-auth') !== false && $method === 'GET') {
     checkAuth();
 } else {
@@ -201,6 +203,50 @@ function getCurrentUserInfo($db) {
     }
 
     echo json_encode($stmt->fetch());
+}
+
+/**
+ * Aktuális felhasználó adatainak frissítése
+ */
+function updateCurrentUser($db) {
+    $user = requireAuth();
+    $data = json_decode(file_get_contents('php://input'), true);
+    if (!$data) { http_response_code(400); echo json_encode(['message' => 'Érvénytelen adat']); return; }
+
+    $allowed = ['keresztnev', 'vezeteknev', 'telefon', 'iranyitoszam', 'varos', 'cim', 'email'];
+    $set = [];
+    $params = [':id' => $user['user_id']];
+    foreach ($allowed as $f) {
+        if (array_key_exists($f, $data)) {
+            $val = is_string($data[$f]) ? trim($data[$f]) : $data[$f];
+            if ($f === 'telefon' && $val !== '' && !preg_match('/^\+?[0-9 ]{7,15}$/', $val)) {
+                http_response_code(400); echo json_encode(['message' => 'Érvénytelen telefonszám formátum']); return;
+            }
+            if ($f === 'iranyitoszam' && $val !== '' && !preg_match('/^[0-9]{4}$/', $val)) {
+                http_response_code(400); echo json_encode(['message' => 'Az irányítószám 4 számjegyből álljon']); return;
+            }
+            if (($f === 'keresztnev' || $f === 'vezeteknev') && mb_strlen((string)$val) > 20) {
+                http_response_code(400); echo json_encode(['message' => 'A vezetéknév/keresztnév maximum 20 karakter']); return;
+            }
+            $set[] = "$f = :$f";
+            $params[":$f"] = $val;
+        }
+    }
+    if (!$set) { http_response_code(400); echo json_encode(['message' => 'Nincs frissítendő mező']); return; }
+
+    if (!empty($data['jelszo'])) {
+        if (strlen($data['jelszo']) < 6) { http_response_code(400); echo json_encode(['message' => 'A jelszó legalább 6 karakter']); return; }
+        $set[] = 'jelszo_hash = :jelszo_hash';
+        $params[':jelszo_hash'] = password_hash($data['jelszo'], PASSWORD_BCRYPT);
+    }
+
+    $sql = "UPDATE felhasznalok SET " . implode(', ', $set) . " WHERE id = :id";
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+
+    $stmt = $db->prepare("SELECT id, felhasznalonev, email, keresztnev, vezeteknev, telefon, iranyitoszam, varos, cim, admin, regisztralt FROM felhasznalok WHERE id = :id");
+    $stmt->execute([':id' => $user['user_id']]);
+    echo json_encode(['message' => 'Adatok frissítve', 'user' => $stmt->fetch()]);
 }
 
 /**

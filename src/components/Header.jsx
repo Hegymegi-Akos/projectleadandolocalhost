@@ -108,6 +108,7 @@ const Header = () => {
                           <div className="dropdown-divider" />
                         </>
                       )}
+                      <button onClick={() => navTo('/profile')} className="dropdown-item">Adataim</button>
                       <button onClick={() => navTo('/messages')} className="dropdown-item">Üzeneteim</button>
                       <button onClick={() => navTo('/orders')} className="dropdown-item">Rendeléseim</button>
                       <button onClick={() => navTo('/coupons')} className="dropdown-item">Kuponjaim</button>
@@ -211,6 +212,7 @@ const Header = () => {
                     <strong>{user?.felhasznalonev}</strong>
                     <span>{user?.email}</span>
                   </div>
+                  <button onClick={() => navTo('/profile')} className="mobile-nav-item">Adataim</button>
                   <button onClick={() => navTo('/messages')} className="mobile-nav-item">Üzeneteim</button>
                   <button onClick={() => navTo('/orders')} className="mobile-nav-item">Rendeléseim</button>
                   <button onClick={() => navTo('/coupons')} className="mobile-nav-item">Kuponjaim</button>

@@ -22,6 +22,7 @@ import Wall from './components/Wall';
 import Tips from './components/Tips';
 import Contact from './components/Contact';
 import Messages from './components/Messages';
+import Profile from './components/Profile';
 
 import ProductCategory from './components/ProductCategory';
 import ProductDetail from './components/ProductDetail';
@@ -137,6 +138,8 @@ const AppContent = () => {
         <Route path="/wall" element={<Wall />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/messages" element={<Messages />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/adataim" element={<Profile />} />
       </Routes>
       <Footer />
     </div>

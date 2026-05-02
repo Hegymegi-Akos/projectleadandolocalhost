@@ -111,6 +111,19 @@ export const authAPI = {
     const response = await fetch(`${PHP_API_URL}/auth.php/me`, { headers: getHeaders() });
     return await response.json();
   },
+  async updateProfile(payload) {
+    const response = await fetch(`${PHP_API_URL}/auth.php/me`, {
+      method: 'PUT', headers: getHeaders(),
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Profil mentése sikertelen');
+    if (data.user) {
+      const stored = JSON.parse(localStorage.getItem('user') || '{}');
+      localStorage.setItem('user', JSON.stringify({ ...stored, ...data.user }));
+    }
+    return data;
+  },
   async checkAuth() {
     const response = await fetch(`${PHP_API_URL}/auth.php/check-auth`, { headers: getHeaders() });
     return await response.json();

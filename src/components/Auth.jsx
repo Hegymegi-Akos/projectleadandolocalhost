@@ -98,7 +98,7 @@ const Auth = () => {
             <>
               <div className="form-field">
                 <label>Jelszó újra</label>
-                <input name="jelszo2" type="password" value={formData.jelszo2} onChange={handleChange} required placeholder="Jelszó megerősítése" />
+                <input name="jelszo2" type={showPassword ? 'text' : 'password'} value={formData.jelszo2} onChange={handleChange} required placeholder="Jelszó megerősítése" />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className="form-field"><label>Vezetéknév</label><input name="vezeteknev" maxLength={20} value={formData.vezeteknev} onChange={handleChange} placeholder="Kovács (max 20)" /></div>
