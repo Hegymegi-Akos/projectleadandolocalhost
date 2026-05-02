@@ -22,7 +22,20 @@ const Profile = () => {
     (async () => {
       try {
         const u = await authAPI.getCurrentUser();
-        setForm(prev => ({ ...prev, ...u, jelszo: '', jelszo2: '' }));
+        if (u && u.felhasznalonev) {
+          setForm(prev => ({
+            ...prev,
+            felhasznalonev: u.felhasznalonev || '',
+            email: u.email || '',
+            keresztnev: u.keresztnev || '',
+            vezeteknev: u.vezeteknev || '',
+            telefon: u.telefon || '',
+            iranyitoszam: u.iranyitoszam || '',
+            varos: u.varos || '',
+            cim: u.cim || '',
+            jelszo: '', jelszo2: ''
+          }));
+        }
       } catch {}
       finally { setLoading(false); }
     })();
@@ -50,12 +63,17 @@ const Profile = () => {
     setSaving(true);
     try {
       const payload = {
-        keresztnev: form.keresztnev, vezeteknev: form.vezeteknev, telefon: form.telefon,
-        iranyitoszam: form.iranyitoszam, varos: form.varos, cim: form.cim, email: form.email,
+        keresztnev: form.keresztnev || '',
+        vezeteknev: form.vezeteknev || '',
+        telefon: form.telefon || '',
+        iranyitoszam: form.iranyitoszam || '',
+        varos: form.varos || '',
+        cim: form.cim || '',
+        email: form.email || '',
       };
       if (form.jelszo) payload.jelszo = form.jelszo;
-      await authAPI.updateProfile(payload);
-      setMsg('Adatok sikeresen mentve!');
+      const result = await authAPI.updateProfile(payload);
+      setMsg(result.message || 'Adatok sikeresen mentve!');
       setEditing(false);
       setForm(prev => ({ ...prev, jelszo: '', jelszo2: '' }));
       setTimeout(() => setMsg(''), 3000);
@@ -66,20 +84,8 @@ const Profile = () => {
 
   if (loading) return <main className="container page" style={{ textAlign: 'center', padding: 60 }}>Betöltés...</main>;
 
-  const Field = ({ label, k, type = 'text', placeholder, maxLength, onlyNumeric, readOnly }) => (
-    <div className="form-field">
-      <label>{label}</label>
-      <input
-        type={type} value={form[k] || ''} placeholder={placeholder} maxLength={maxLength}
-        readOnly={readOnly || !editing}
-        onChange={e => {
-          const val = onlyNumeric ? e.target.value.replace(/[^0-9+ ]/g, '') : e.target.value;
-          update(k, val);
-        }}
-        style={{ background: !editing ? 'rgba(0,0,0,0.03)' : undefined }}
-      />
-    </div>
-  );
+  const ro = !editing;
+  const roStyle = ro ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : undefined;
 
   return (
     <main className="container page" style={{ maxWidth: 720, margin: '0 auto' }}>
@@ -89,18 +95,42 @@ const Profile = () => {
         {msg && <div style={{ color: '#059669', marginBottom: 16, padding: '12px 16px', background: '#ecfdf5', borderRadius: 10, fontWeight: 600, fontSize: '0.9rem' }}>{msg}</div>}
 
         <form onSubmit={save} className="form-grid">
-          <Field label="Felhasználónév" k="felhasznalonev" placeholder="kisallat_fan" readOnly />
-          <Field label="Email" k="email" type="email" placeholder="példa@email.hu" />
+          <div className="form-field">
+            <label>Felhasználónév</label>
+            <input value={form.felhasznalonev} readOnly style={{ background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' }} />
+          </div>
+          <div className="form-field">
+            <label>Email</label>
+            <input type="email" value={form.email} onChange={e => update('email', e.target.value)} readOnly={ro} style={roStyle} placeholder="példa@email.hu" />
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <Field label="Vezetéknév" k="vezeteknev" maxLength={20} placeholder="Kovács" />
-            <Field label="Keresztnév" k="keresztnev" maxLength={20} placeholder="János" />
+            <div className="form-field">
+              <label>Vezetéknév</label>
+              <input value={form.vezeteknev} maxLength={20} onChange={e => update('vezeteknev', e.target.value)} readOnly={ro} style={roStyle} placeholder="Kovács" />
+            </div>
+            <div className="form-field">
+              <label>Keresztnév</label>
+              <input value={form.keresztnev} maxLength={20} onChange={e => update('keresztnev', e.target.value)} readOnly={ro} style={roStyle} placeholder="János" />
+            </div>
           </div>
-          <Field label="Telefon" k="telefon" onlyNumeric placeholder="+36 30 123 4567" />
+          <div className="form-field">
+            <label>Telefon</label>
+            <input value={form.telefon} inputMode="tel" onChange={e => update('telefon', e.target.value.replace(/[^0-9+ ]/g, ''))} readOnly={ro} style={roStyle} placeholder="+36 30 123 4567" />
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 12 }}>
-            <Field label="Irányítószám" k="iranyitoszam" maxLength={4} onlyNumeric placeholder="1234" />
-            <Field label="Város" k="varos" placeholder="Budapest" />
+            <div className="form-field">
+              <label>Irányítószám</label>
+              <input value={form.iranyitoszam} maxLength={4} inputMode="numeric" onChange={e => update('iranyitoszam', e.target.value.replace(/[^0-9]/g, ''))} readOnly={ro} style={roStyle} placeholder="1234" />
+            </div>
+            <div className="form-field">
+              <label>Város</label>
+              <input value={form.varos} onChange={e => update('varos', e.target.value)} readOnly={ro} style={roStyle} placeholder="Budapest" />
+            </div>
           </div>
-          <Field label="Cím" k="cim" placeholder="Utca, házszám" />
+          <div className="form-field">
+            <label>Cím</label>
+            <input value={form.cim} onChange={e => update('cim', e.target.value)} readOnly={ro} style={roStyle} placeholder="Utca, házszám" />
+          </div>
 
           {editing && (
             <>
@@ -120,11 +150,11 @@ const Profile = () => {
 
           <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
             {!editing ? (
-              <button type="button" className="btn-primary" onClick={() => setEditing(true)} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>Szerkesztés</button>
+              <button type="button" className="btn-primary" onClick={() => { setEditing(true); setErr(''); setMsg(''); }} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>Szerkesztés</button>
             ) : (
               <>
                 <button type="submit" className="btn-primary" disabled={saving} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>{saving ? 'Mentés...' : 'Mentés'}</button>
-                <button type="button" className="btn-secondary" onClick={() => { setEditing(false); setErr(''); }} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>Mégse</button>
+                <button type="button" className="btn-secondary" onClick={() => { setEditing(false); setErr(''); setForm(prev => ({ ...prev, jelszo: '', jelszo2: '' })); }} style={{ flex: 1, padding: '12px', borderRadius: 12 }}>Mégse</button>
               </>
             )}
           </div>

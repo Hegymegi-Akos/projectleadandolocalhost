@@ -113,10 +113,11 @@ export const authAPI = {
   },
   async updateProfile(payload) {
     const response = await fetch(`${PHP_API_URL}/auth.php/me`, {
-      method: 'PUT', headers: getHeaders(),
+      method: 'POST', headers: getHeaders(),
       body: JSON.stringify(payload),
     });
-    const data = await response.json();
+    const text = await response.text();
+    let data; try { data = JSON.parse(text); } catch { throw new Error('Szerverhiba: ' + text.slice(0, 200)); }
     if (!response.ok) throw new Error(data.message || 'Profil mentése sikertelen');
     if (data.user) {
       const stored = JSON.parse(localStorage.getItem('user') || '{}');
